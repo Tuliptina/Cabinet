@@ -829,7 +829,7 @@ with tab_examination:
 }
 default_icons = {"Instruments": "⚙️", "Specimens": "🫙", "Personal": "📜"}
 icon = icon_map.get(item["id"], default_icons.get(cat, "📦"))
-                st.markdown(
+st.markdown(
                     f'<div style="text-align:center;padding:2rem;font-size:4rem;'
                     f'background:{t["card"]};border-radius:8px;border:1px solid {t["border"]}">'
                     f'{icon}</div>',
