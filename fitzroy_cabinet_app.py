@@ -16,7 +16,7 @@ from cabinet_content import (
     check_cabinet_secret,
 )
 from cabinet_3d import get_cabinet_3d
-from cabinet_2d_bottles import bottle_svg, mixing_result_svg, get_mode_palette
+from cabinet_2d_bottles import bottle_svg, mixing_result_svg, get_mode_palette, instrument_svg, specimen_svg
 
 # =============================================================================
 # PAGE CONFIG
@@ -820,13 +820,20 @@ with tab_examination:
                                  uv=st.session_state.uv_mode, w=160, h=260)
                 st.markdown(f'<div style="text-align:center;padding:1rem">{svg}</div>',
                             unsafe_allow_html=True)
+            elif cat == "Instruments":
+                svg = instrument_svg(item["id"], mode=mode, w=160, h=260)
+                st.markdown(f'<div style="text-align:center;padding:1rem">{svg}</div>',
+                            unsafe_allow_html=True)
+            elif cat == "Specimens":
+                svg = specimen_svg(item["id"], mode=mode, w=160, h=260)
+                st.markdown(f'<div style="text-align:center;padding:1rem">{svg}</div>',
+                            unsafe_allow_html=True)
             else:
-                # Placeholder for non-bottle items
-                icon = {"Instruments": "🔪", "Specimens": "🫙", "Personal": "📜"}.get(cat, "📦")
+                # Personal items
                 st.markdown(
                     f'<div style="text-align:center;padding:2rem;font-size:4rem;'
                     f'background:{t["card"]};border-radius:8px;border:1px solid {t["border"]}">'
-                    f'{icon}</div>',
+                    f'📜</div>',
                     unsafe_allow_html=True,
                 )
 
