@@ -4,10 +4,11 @@ Each bottle has a unique hand-crafted SVG design.
 Supports gaslight/gothic/clinical modes and UV overlay.
 
 BUG FIXES IMPLEMENTED:
-- Stripped newlines from the final SVG returns to prevent Streamlit's 
-  Markdown parser from rendering indented SVG lines as raw code blocks.
+- Fixed coordinate clipping by enforcing a static native viewBox (200x300) and scaling via img attributes.
+- Encapsulated final SVGs into Base64 Data URIs to prevent Streamlit's `bleach` sanitizer from stripping `<filter>` and `<linearGradient>` tags.
 """
 
+import base64
 
 def get_mode_palette(mode: str) -> dict:
     palettes = {
@@ -35,14 +36,16 @@ def get_mode_palette(mode: str) -> dict:
 
 def bottle_svg(bottle_id: str, mode: str = "gaslight", selected: bool = False,
                uv: bool = False, size: int = 200, w: int = None, h: int = None, **kwargs) -> str:
-    """Return a complete SVG string for a specific bottle."""
+    """Return a base64 encoded SVG image tag for a specific bottle."""
     p = get_mode_palette(mode)
     
-    # Handle explicit w/h overrides from the app UI, fallback to size ratios
-    if w is None:
-        w = size
-    if h is None:
-        h = int(size * 1.5)
+    # Static native coordinate system to prevent path clipping
+    native_w = 200
+    native_h = 300
+    
+    # HTML display size (how large it appears on screen)
+    disp_w = w if w is not None else size
+    disp_h = h if h is not None else int(size * 1.5)
         
     sel_stroke = p["highlight"] if selected else "none"
     sel_width = 2 if selected else 0
@@ -74,20 +77,22 @@ def bottle_svg(bottle_id: str, mode: str = "gaslight", selected: bool = False,
     }
 
     renderer = renderers.get(bottle_id, _default_bottle)
-    inner_svg = renderer(bottle_id, p, w, h, uv)
+    inner_svg = renderer(bottle_id, p, native_w, native_h, uv)
 
     uv_attr = 'filter="url(#uvglow)"' if uv else ""
 
-    svg_str = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    # Generate raw SVG string
+    svg_str = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {native_w} {native_h}" width="{native_w}" height="{native_h}">
     {defs}
-    <rect width="{w}" height="{h}" fill="none" stroke="{sel_stroke}" stroke-width="{sel_width}" rx="8"/>
+    <rect width="{native_w}" height="{native_h}" fill="none" stroke="{sel_stroke}" stroke-width="{sel_width}" rx="8"/>
     <g {uv_attr} filter="url(#shadow)">
     {inner_svg}
     </g>
     </svg>'''
     
-    # Strip newlines so Streamlit Markdown doesn't parse indented tags as code blocks
-    return svg_str.replace('\n', '')
+    # Base64 encode to completely bypass Streamlit's HTML sanitizer
+    b64 = base64.b64encode(svg_str.encode('utf-8')).decode('utf-8')
+    return f'<img src="data:image/svg+xml;base64,{b64}" width="{disp_w}" height="{disp_h}" style="border-radius:8px; display:inline-block;" />'
 
 
 # =============================================================================
@@ -95,7 +100,6 @@ def bottle_svg(bottle_id: str, mode: str = "gaslight", selected: bool = False,
 # =============================================================================
 
 def _laudanum(bid, p, w, h, uv):
-    """Tall apothecary bottle — amber glass, ornate label, skull detail"""
     cx = w // 2
     return f'''
     <path d="M{cx-22},{h-30} Q{cx-25},{h-35} {cx-25},{h-80}
@@ -146,7 +150,6 @@ def _laudanum(bid, p, w, h, uv):
 
 
 def _chloroform(bid, p, w, h, uv):
-    """Wide round bottle — dark green, cloth draped, handwritten label"""
     cx = w // 2
     return f'''
     <ellipse cx="{cx}" cy="{h-65}" rx="35" ry="40" fill="#2d5a27" fill-opacity="0.65" stroke="#1a3a15" stroke-width="0.8"/>
@@ -172,7 +175,6 @@ def _chloroform(bid, p, w, h, uv):
 
 
 def _mercury(bid, p, w, h, uv):
-    """Cobalt blue round bottle — wax-sealed, heavy"""
     cx = w // 2
     return f'''
     <circle cx="{cx}" cy="{h-75}" r="32" fill="#1a3a6a" fill-opacity="0.75" stroke="#0d2040" stroke-width="1"/>
@@ -194,7 +196,6 @@ def _mercury(bid, p, w, h, uv):
 
 
 def _ether(bid, p, w, h, uv):
-    """Wide-mouth jar — clear glass, cloth over top, shimmer lines"""
     cx = w // 2
     return f'''
     <rect x="{cx-32}" y="{h-105}" width="64" height="70" rx="6" fill="#d4d4c8" fill-opacity="0.35" stroke="#aaa" stroke-width="0.7"/>
@@ -218,7 +219,6 @@ def _ether(bid, p, w, h, uv):
 
 
 def _strychnine(bid, p, w, h, uv):
-    """Tiny red vial — locked brass cap, skull and crossbones"""
     cx = w // 2
     return f'''
     <path d="M{cx-10},{h-45} L{cx-12},{h-100} Q{cx-12},{h-110} {cx-8},{h-115}
@@ -242,8 +242,8 @@ def _strychnine(bid, p, w, h, uv):
     <circle cx="{cx-2.5}" cy="{h-84}" r="1.2" fill="#ff6666" opacity="0.6"/>
     <circle cx="{cx+2.5}" cy="{h-84}" r="1.2" fill="#ff6666" opacity="0.6"/>
     <path d="M{cx-2},{h-79} Q{cx},{h-78} {cx+2},{h-79}" fill="none" stroke="#ff6666" stroke-width="0.4" opacity="0.6"/>
-    <line x1="{cx-8}" y1="{h-73}" x2="{cx+8}" y2="{h-68}" stroke="#ff6666" stroke-width="0.6" opacity="0.5"/>
-    <line x1="{cx+8}" y1="{h-73}" x2="{cx-8}" y2="{h-68}" stroke="#ff6666" stroke-width="0.6" opacity="0.5"/>
+    <line x1="{cx-8}" y="{h-73}" x2="{cx+8}" y2="{h-68}" stroke="#ff6666" stroke-width="0.6" opacity="0.5"/>
+    <line x1="{cx+8}" y="{h-73}" x2="{cx-8}" y2="{h-68}" stroke="#ff6666" stroke-width="0.6" opacity="0.5"/>
     <text x="{cx}" y="{h-58}" text-anchor="middle" font-family="Georgia,serif" font-size="5" fill="#ff4444" letter-spacing="2" opacity="0.7">POISON</text>
     {"" if not uv else f'<text x="{cx}" y="{h-38}" text-anchor="middle" font-family="monospace" font-size="4.5" fill="#bb88ff">SCHEDULE I</text>'}
     <text x="{cx}" y="{h-10}" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="{p['text']}">Strychnine</text>
@@ -251,7 +251,6 @@ def _strychnine(bid, p, w, h, uv):
 
 
 def _arsenic_wafers(bid, p, w, h, uv):
-    """Decorative tin — ornate lid, floral patterns"""
     cx = w // 2
     return f'''
     <rect x="{cx-30}" y="{h-80}" width="60" height="35" rx="5" fill="#e8e0c8" stroke="#c4a060" stroke-width="0.8"/>
@@ -272,7 +271,6 @@ def _arsenic_wafers(bid, p, w, h, uv):
 
 
 def _dovers_powder(bid, p, w, h, uv):
-    """Brown medicine bottle — standard pharmacy, altered label"""
     cx = w // 2
     return f'''
     <path d="M{cx-18},{h-35} L{cx-20},{h-100} Q{cx-20},{h-108} {cx-14},{h-112}
@@ -300,7 +298,6 @@ def _dovers_powder(bid, p, w, h, uv):
 
 
 def _paregoric(bid, p, w, h, uv):
-    """Small amber bottle — sleeping child illustration on label"""
     cx = w // 2
     return f'''
     <path d="M{cx-14},{h-40} L{cx-16},{h-90}
@@ -332,7 +329,6 @@ def _paregoric(bid, p, w, h, uv):
 
 
 def _fitzroy_tonic(bid, p, w, h, uv):
-    """Professional pharmaceutical bottle — printed label, clean design"""
     cx = w // 2
     return f'''
     <path d="M{cx-18},{h-30} L{cx-20},{h-110}
@@ -368,7 +364,6 @@ def _fitzroy_tonic(bid, p, w, h, uv):
 
 
 def _distilled_blood(bid, p, w, h, uv):
-    """Dark laboratory vial in leather case"""
     cx = w // 2
     return f'''
     <rect x="{cx-24}" y="{h-75}" width="48" height="40" rx="4" fill="#3a2010" stroke="#2a1508" stroke-width="0.8"/>
@@ -388,7 +383,6 @@ def _distilled_blood(bid, p, w, h, uv):
 
 
 def _smelling_salts(bid, p, w, h, uv):
-    """Cut-glass crystal bottle with silver cap"""
     cx = w // 2
     return f'''
     <polygon points="{cx},{h-110} {cx+18},{h-100} {cx+22},{h-70} {cx+18},{h-40} {cx-18},{h-40} {cx-22},{h-70} {cx-18},{h-100}"
@@ -413,7 +407,6 @@ def _smelling_salts(bid, p, w, h, uv):
 
 
 def _belladonna(bid, p, w, h, uv):
-    """Elegant purple bottle — tapered, ornate, with eye motif"""
     cx = w // 2
     return f'''
     <path d="M{cx-16},{h-35} Q{cx-20},{h-45} {cx-22},{h-75}
@@ -455,7 +448,6 @@ def _belladonna(bid, p, w, h, uv):
 
 
 def _default_bottle(bid, p, w, h, uv):
-    """Fallback generic bottle"""
     cx = w // 2
     return f'''
     <rect x="{cx-15}" y="{h-120}" width="30" height="80" rx="4" fill="#888" fill-opacity="0.5" stroke="#666" stroke-width="0.7"/>
@@ -470,7 +462,7 @@ def _default_bottle(bid, p, w, h, uv):
 # =============================================================================
 
 def mixing_result_svg(recipe: dict, mode: str = "gaslight", w: int = 400, h: int = 200) -> str:
-    """Render a mixing result as an SVG card."""
+    """Render a mixing result as a base64 encoded SVG image."""
     p = get_mode_palette(mode)
     danger_color = ["#4a8a4a", "#6a8a3a", "#aa8a2a", "#cc4a2a", "#cc0000"][min(recipe.get("danger", 1) - 1, 4)]
     danger_pips = "● " * recipe.get("danger", 1) + "○ " * (5 - recipe.get("danger", 1))
@@ -497,5 +489,6 @@ def mixing_result_svg(recipe: dict, mode: str = "gaslight", w: int = 400, h: int
     <text x="95" y="{h-20}" font-family="Georgia,serif" font-size="8" fill="{p['text_dim']}" font-style="italic">{recipe.get('lore','')[:90]}...</text>
     </svg>'''
     
-    # Strip newlines so Streamlit Markdown doesn't parse indented tags as code blocks
-    return svg_str.replace('\n', '')
+    # Base64 encode to completely bypass Streamlit's HTML sanitizer
+    b64 = base64.b64encode(svg_str.encode('utf-8')).decode('utf-8')
+    return f'<img src="data:image/svg+xml;base64,{b64}" width="{w}" height="{h}" style="border-radius: 8px; max-width: 100%; display:inline-block;" />'
