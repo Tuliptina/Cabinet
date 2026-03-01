@@ -492,3 +492,612 @@ def mixing_result_svg(recipe: dict, mode: str = "gaslight", w: int = 400, h: int
     # Base64 encode to completely bypass Streamlit's HTML sanitizer
     b64 = base64.b64encode(svg_str.encode('utf-8')).decode('utf-8')
     return f'<img src="data:image/svg+xml;base64,{b64}" width="{w}" height="{h}" style="border-radius: 8px; max-width: 100%; display:inline-block;" />'
+
+
+# =============================================================================
+# INSTRUMENT SVG RENDERERS
+# =============================================================================
+
+def _b64_wrap(svg_str: str, disp_w: int, disp_h: int) -> str:
+    """Base64 encode an SVG string into an img tag (same pattern as bottles)."""
+    b64 = base64.b64encode(svg_str.encode('utf-8')).decode('utf-8')
+    return f'<img src="data:image/svg+xml;base64,{b64}" width="{disp_w}" height="{disp_h}" style="border-radius:8px; display:inline-block;" />'
+
+
+def instrument_svg(instrument_id: str, mode: str = "gaslight", w: int = 160, h: int = 260) -> str:
+    """Return a base64 encoded SVG image tag for a surgical instrument."""
+    p = get_mode_palette(mode)
+    native_w, native_h = 200, 300
+    renderers = {
+        "scarificator": _inst_scarificator,
+        "leech_jar": _inst_leech_jar,
+        "trephine": _inst_trephine,
+        "amputation_saw": _inst_amputation_saw,
+        "syringe": _inst_syringe,
+        "scalpel_set": _inst_scalpel_set,
+        "cupping_set": _inst_cupping_set,
+        "obstetric_forceps": _inst_obstetric_forceps,
+    }
+    renderer = renderers.get(instrument_id, _inst_default)
+    svg_str = renderer(p, native_w, native_h)
+    return _b64_wrap(svg_str, w, h)
+
+
+def _inst_leech_jar(p, w, h):
+    """A tall glass jar with murky water and animated leeches."""
+    cx = w // 2
+    jar_top = 35
+    jar_bot = h - 40
+    water_top = jar_top + 25
+    jar_w = 52
+    lid_h = 12
+
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <defs>
+        <linearGradient id="lj_glass" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#88bbaa" stop-opacity="0.25"/>
+            <stop offset="30%" stop-color="#aaddcc" stop-opacity="0.12"/>
+            <stop offset="70%" stop-color="#aaddcc" stop-opacity="0.12"/>
+            <stop offset="100%" stop-color="#88bbaa" stop-opacity="0.25"/>
+        </linearGradient>
+        <linearGradient id="lj_water" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#556644" stop-opacity="0.4"/>
+            <stop offset="40%" stop-color="#445533" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#334422" stop-opacity="0.7"/>
+        </linearGradient>
+        <linearGradient id="lj_lid" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ccbb99"/><stop offset="100%" stop-color="#aa9977"/>
+        </linearGradient>
+        <filter id="lj_murk"><feGaussianBlur stdDeviation="1.5"/></filter>
+    </defs>
+
+    <!-- Shadow beneath jar -->
+    <ellipse cx="{cx}" cy="{jar_bot + 8}" rx="{jar_w - 5}" ry="6" fill="{p['shadow']}" opacity="0.4"/>
+
+    <!-- Jar body -->
+    <rect x="{cx - jar_w}" y="{jar_top}" width="{jar_w * 2}" height="{jar_bot - jar_top}"
+          rx="6" fill="url(#lj_glass)" stroke="{p['border']}" stroke-width="0.8"/>
+
+    <!-- Murky water -->
+    <rect x="{cx - jar_w + 3}" y="{water_top}" width="{jar_w * 2 - 6}" height="{jar_bot - water_top - 3}"
+          rx="4" fill="url(#lj_water)"/>
+
+    <!-- Murky particles -->
+    <g filter="url(#lj_murk)" opacity="0.4">
+        <circle cx="{cx - 15}" cy="{water_top + 40}" r="8" fill="#445533"/>
+        <circle cx="{cx + 20}" cy="{water_top + 70}" r="6" fill="#3a4a2a"/>
+        <circle cx="{cx - 5}" cy="{water_top + 90}" r="10" fill="#3d4d2d"/>
+        <circle cx="{cx + 10}" cy="{water_top + 30}" r="5" fill="#4a5a3a"/>
+    </g>
+
+    <!-- Water surface -->
+    <path d="M{cx - jar_w + 8},{water_top} Q{cx},{water_top - 3} {cx + jar_w - 8},{water_top}"
+          fill="none" stroke="#aaccaa" stroke-width="0.4" opacity="0.6"/>
+
+    <!-- Leech 1 — curled on glass wall -->
+    <path d="M{cx - 30},{water_top + 50} Q{cx - 38},{water_top + 60} {cx - 32},{water_top + 72}
+             Q{cx - 26},{water_top + 80} {cx - 30},{water_top + 85}"
+          fill="none" stroke="#1a1a0a" stroke-width="4.5" stroke-linecap="round" opacity="0.85"/>
+    <ellipse cx="{cx - 30}" cy="{water_top + 48}" rx="3" ry="2.5" fill="#2a2a10" opacity="0.8"/>
+
+    <!-- Leech 2 — swimming S-curve -->
+    <path d="M{cx - 8},{water_top + 35} Q{cx + 8},{water_top + 45} {cx - 2},{water_top + 58}
+             Q{cx - 12},{water_top + 68} {cx + 2},{water_top + 78}"
+          fill="none" stroke="#222210" stroke-width="4" stroke-linecap="round" opacity="0.8"/>
+    <ellipse cx="{cx - 8}" cy="{water_top + 33}" rx="2.8" ry="2" fill="#2a2a0a" opacity="0.75"/>
+
+    <!-- Leech 3 — coiled at bottom -->
+    <path d="M{cx + 18},{water_top + 95} Q{cx + 28},{water_top + 88} {cx + 22},{water_top + 78}
+             Q{cx + 15},{water_top + 72} {cx + 25},{water_top + 68}"
+          fill="none" stroke="#1f1f0a" stroke-width="3.8" stroke-linecap="round" opacity="0.75"/>
+    <ellipse cx="{cx + 18}" cy="{water_top + 97}" rx="2.5" ry="2" fill="#252510" opacity="0.7"/>
+
+    <!-- Leech segment textures -->
+    <g opacity="0.15">
+        <line x1="{cx - 4}" y1="{water_top + 42}" x2="{cx + 2}" y2="{water_top + 42}" stroke="#666600" stroke-width="0.5"/>
+        <line x1="{cx + 2}" y1="{water_top + 50}" x2="{cx - 4}" y2="{water_top + 50}" stroke="#666600" stroke-width="0.5"/>
+        <line x1="{cx - 6}" y1="{water_top + 62}" x2="{cx}" y2="{water_top + 62}" stroke="#666600" stroke-width="0.5"/>
+    </g>
+
+    <!-- Glass reflections -->
+    <rect x="{cx - jar_w + 4}" y="{jar_top + 10}" width="4" height="{jar_bot - jar_top - 20}"
+          rx="2" fill="white" opacity="0.08"/>
+    <rect x="{cx + jar_w - 10}" y="{jar_top + 15}" width="2" height="{jar_bot - jar_top - 30}"
+          rx="1" fill="white" opacity="0.05"/>
+
+    <!-- Rim -->
+    <rect x="{cx - jar_w - 2}" y="{jar_top - 3}" width="{jar_w * 2 + 4}" height="6"
+          rx="3" fill="url(#lj_glass)" stroke="{p['border']}" stroke-width="0.6"/>
+
+    <!-- Ceramic lid with perforations -->
+    <rect x="{cx - jar_w - 4}" y="{jar_top - lid_h - 3}" width="{jar_w * 2 + 8}" height="{lid_h}"
+          rx="4" fill="url(#lj_lid)" stroke="{p['border']}" stroke-width="0.7"/>
+    <g fill="{p['border']}" opacity="0.5">
+        <circle cx="{cx - 25}" cy="{jar_top - lid_h + 3}" r="1.5"/>
+        <circle cx="{cx - 15}" cy="{jar_top - lid_h + 3}" r="1.5"/>
+        <circle cx="{cx - 5}" cy="{jar_top - lid_h + 3}" r="1.5"/>
+        <circle cx="{cx + 5}" cy="{jar_top - lid_h + 3}" r="1.5"/>
+        <circle cx="{cx + 15}" cy="{jar_top - lid_h + 3}" r="1.5"/>
+        <circle cx="{cx + 25}" cy="{jar_top - lid_h + 3}" r="1.5"/>
+        <circle cx="{cx - 20}" cy="{jar_top - 3}" r="1.5"/>
+        <circle cx="{cx - 10}" cy="{jar_top - 3}" r="1.5"/>
+        <circle cx="{cx}" cy="{jar_top - 3}" r="1.5"/>
+        <circle cx="{cx + 10}" cy="{jar_top - 3}" r="1.5"/>
+        <circle cx="{cx + 20}" cy="{jar_top - 3}" r="1.5"/>
+    </g>
+    <!-- Lid knob -->
+    <rect x="{cx - 8}" y="{jar_top - lid_h - 8}" width="16" height="6" rx="3"
+          fill="#bbaa88" stroke="{p['border']}" stroke-width="0.5"/>
+
+    <!-- Label -->
+    <rect x="{cx - 28}" y="{jar_bot - 30}" width="56" height="22" rx="2"
+          fill="{p['label_bg']}" opacity="0.85" stroke="{p['border']}" stroke-width="0.4"/>
+    <text x="{cx}" y="{jar_bot - 16}" font-family="Georgia,serif" font-size="7"
+          fill="{p['label_text']}" text-anchor="middle" font-style="italic">Hirudo medicinalis</text>
+    <text x="{cx}" y="{jar_bot - 9}" font-family="Georgia,serif" font-size="5.5"
+          fill="{p['label_text']}" text-anchor="middle" opacity="0.6">LIVE SPECIMENS</text>
+
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Leech Jar</text>
+    </svg>'''
+
+
+def _inst_scarificator(p, w, h):
+    """Brass spring-loaded bleeding device."""
+    cx = w // 2
+    bx, by, bw, bh = cx - 35, 60, 70, 45
+
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <defs>
+        <linearGradient id="sc_brass" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#c9a83e"/><stop offset="50%" stop-color="#b8860b"/><stop offset="100%" stop-color="#8a6508"/>
+        </linearGradient>
+        <linearGradient id="sc_steel" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#cccccc"/><stop offset="100%" stop-color="#888888"/>
+        </linearGradient>
+    </defs>
+    <ellipse cx="{cx}" cy="{h - 35}" rx="40" ry="5" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Main box -->
+    <rect x="{bx}" y="{by}" width="{bw}" height="{bh}" rx="4"
+          fill="url(#sc_brass)" stroke="{p['border']}" stroke-width="1"/>
+    <!-- Lid (slightly open) -->
+    <rect x="{bx - 1}" y="{by - 18}" width="{bw + 2}" height="20" rx="4"
+          fill="url(#sc_brass)" stroke="{p['border']}" stroke-width="0.8"
+          transform="rotate(-8, {bx}, {by})"/>
+    <!-- Hinge -->
+    <circle cx="{bx + bw - 5}" cy="{by}" r="3" fill="#8a6508" stroke="{p['border']}" stroke-width="0.5"/>
+    <!-- Blades visible inside -->
+    <g transform="translate({cx - 22}, {by + 8})">
+        <rect x="0" y="0" width="44" height="28" rx="2" fill="#1a1208" opacity="0.4"/>
+        <!-- Spring coil -->
+        <path d="M8,14 Q12,6 16,14 Q20,22 24,14 Q28,6 32,14 Q36,22 40,14"
+              fill="none" stroke="url(#sc_steel)" stroke-width="1.2" opacity="0.7"/>
+        <!-- Blade slots -->
+        <g stroke="#aaaaaa" stroke-width="0.8" opacity="0.5">
+            <line x1="6" y1="5" x2="6" y2="24"/><line x1="11" y1="5" x2="11" y2="24"/>
+            <line x1="16" y1="5" x2="16" y2="24"/><line x1="21" y1="5" x2="21" y2="24"/>
+            <line x1="26" y1="5" x2="26" y2="24"/><line x1="31" y1="5" x2="31" y2="24"/>
+            <line x1="36" y1="5" x2="36" y2="24"/>
+        </g>
+    </g>
+    <!-- Release knob -->
+    <circle cx="{cx}" cy="{by - 12}" r="6" fill="url(#sc_brass)" stroke="{p['border']}" stroke-width="0.6"/>
+    <circle cx="{cx}" cy="{by - 12}" r="2.5" fill="#8a6508"/>
+    <!-- Engraving -->
+    <text x="{cx}" y="{by + bh + 18}" font-family="Georgia,serif" font-size="8"
+          fill="{p['text_dim']}" text-anchor="middle" font-style="italic" opacity="0.7">E.F.</text>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Scarificator</text>
+    </svg>'''
+
+
+def _inst_trephine(p, w, h):
+    """Hand-cranked skull drill."""
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <defs>
+        <linearGradient id="tr_brass" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#c9a83e"/><stop offset="100%" stop-color="#8a6508"/>
+        </linearGradient>
+        <linearGradient id="tr_steel" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#cccccc"/><stop offset="100%" stop-color="#777777"/>
+        </linearGradient>
+    </defs>
+    <ellipse cx="{cx}" cy="{h - 35}" rx="30" ry="4" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Handle -->
+    <rect x="{cx - 10}" y="40" width="20" height="55" rx="10" fill="url(#tr_brass)"
+          stroke="{p['border']}" stroke-width="0.8"/>
+    <ellipse cx="{cx}" cy="50" rx="12" ry="5" fill="#c9a83e" opacity="0.5"/>
+    <ellipse cx="{cx}" cy="80" rx="11" ry="4" fill="#8a6508" opacity="0.3"/>
+    <!-- Shaft -->
+    <rect x="{cx - 4}" y="95" width="8" height="80" rx="2" fill="url(#tr_steel)"
+          stroke="{p['border']}" stroke-width="0.5"/>
+    <!-- Circular cutting blade -->
+    <circle cx="{cx}" cy="185" r="16" fill="none" stroke="url(#tr_steel)" stroke-width="3"/>
+    <circle cx="{cx}" cy="185" r="13" fill="none" stroke="#aaaaaa" stroke-width="0.5" stroke-dasharray="2,2"/>
+    <!-- Teeth -->
+    <g fill="#999999">
+        <rect x="{cx - 1}" y="168" width="2" height="3"/>
+        <rect x="{cx + 14}" y="183" width="3" height="2"/>
+        <rect x="{cx - 17}" y="183" width="3" height="2"/>
+    </g>
+    <!-- Crank handle -->
+    <line x1="{cx + 10}" y1="55" x2="{cx + 38}" y2="55" stroke="url(#tr_steel)" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="{cx + 38}" cy="55" r="5" fill="url(#tr_brass)" stroke="{p['border']}" stroke-width="0.5"/>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Trephination Drill</text>
+    </svg>'''
+
+
+def _inst_amputation_saw(p, w, h):
+    """Bone saw with ivory handle."""
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <defs>
+        <linearGradient id="as_ivory" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fffff0"/><stop offset="100%" stop-color="#d4c8a8"/>
+        </linearGradient>
+        <linearGradient id="as_steel" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#cccccc"/><stop offset="100%" stop-color="#888888"/>
+        </linearGradient>
+    </defs>
+    <ellipse cx="{cx}" cy="{h - 32}" rx="50" ry="4" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Ivory handle with stains -->
+    <rect x="{cx - 12}" y="55" width="24" height="65" rx="6" fill="url(#as_ivory)"
+          stroke="{p['border']}" stroke-width="0.8"/>
+    <ellipse cx="{cx + 3}" cy="85" rx="6" ry="15" fill="#b8a888" opacity="0.3"/>
+    <ellipse cx="{cx - 5}" cy="75" rx="4" ry="8" fill="#a09070" opacity="0.2"/>
+    <!-- Bolts -->
+    <circle cx="{cx}" cy="62" r="2.5" fill="#aaaaaa" stroke="{p['border']}" stroke-width="0.4"/>
+    <circle cx="{cx}" cy="112" r="2.5" fill="#aaaaaa" stroke="{p['border']}" stroke-width="0.4"/>
+    <!-- Blade spine -->
+    <rect x="{cx - 50}" y="125" width="100" height="6" rx="1" fill="url(#as_steel)"
+          stroke="{p['border']}" stroke-width="0.5"/>
+    <!-- Curved blade -->
+    <path d="M{cx - 50},131 Q{cx - 25},180 {cx},185 Q{cx + 25},180 {cx + 50},131"
+          fill="url(#as_steel)" stroke="{p['border']}" stroke-width="0.6"/>
+    <!-- Teeth -->
+    <path d="M{cx - 45},140 l2,4 l2,-4 l2,4 l2,-4 l2,4 l2,-4 l2,4 l2,-4 l2,4 l2,-4
+             l2,4 l2,-4 l2,4 l2,-4 l2,4 l2,-4 l2,4 l2,-4 l2,4 l2,-4 l2,4 l2,-4"
+          fill="none" stroke="#999999" stroke-width="0.5" opacity="0.6"/>
+    <text x="{cx}" y="50" font-family="Georgia,serif" font-size="5.5"
+          fill="{p['text_dim']}" text-anchor="middle" opacity="0.6">Weiss &amp; Son, London</text>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Amputation Saw</text>
+    </svg>'''
+
+
+def _inst_syringe(p, w, h):
+    """Early hypodermic syringe — Pravaz model."""
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <defs>
+        <linearGradient id="sy_glass" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#ddddc8" stop-opacity="0.5"/>
+            <stop offset="50%" stop-color="#eeeedd" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#ddddc8" stop-opacity="0.5"/>
+        </linearGradient>
+        <linearGradient id="sy_silver" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#cccccc"/><stop offset="100%" stop-color="#999999"/>
+        </linearGradient>
+    </defs>
+    <ellipse cx="{cx}" cy="{h - 32}" rx="15" ry="3" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Finger rings -->
+    <ellipse cx="{cx - 15}" cy="50" rx="10" ry="14" fill="none"
+             stroke="url(#sy_silver)" stroke-width="2.5"/>
+    <ellipse cx="{cx + 15}" cy="50" rx="10" ry="14" fill="none"
+             stroke="url(#sy_silver)" stroke-width="2.5"/>
+    <!-- Plunger rod -->
+    <rect x="{cx - 2}" y="60" width="4" height="30" fill="url(#sy_silver)"
+          stroke="{p['border']}" stroke-width="0.3"/>
+    <!-- Plunger disc -->
+    <rect x="{cx - 9}" y="88" width="18" height="5" rx="2" fill="#aaaaaa"
+          stroke="{p['border']}" stroke-width="0.4"/>
+    <!-- Glass barrel -->
+    <rect x="{cx - 9}" y="93" width="18" height="80" rx="4"
+          fill="url(#sy_glass)" stroke="{p['border']}" stroke-width="0.8"/>
+    <!-- Measurement marks -->
+    <g stroke="{p['text_dim']}" stroke-width="0.4" opacity="0.5">
+        <line x1="{cx + 9}" y1="105" x2="{cx + 14}" y2="105"/>
+        <line x1="{cx + 9}" y1="115" x2="{cx + 14}" y2="115"/>
+        <line x1="{cx + 9}" y1="125" x2="{cx + 14}" y2="125"/>
+        <line x1="{cx + 9}" y1="135" x2="{cx + 14}" y2="135"/>
+        <line x1="{cx + 9}" y1="145" x2="{cx + 14}" y2="145"/>
+        <line x1="{cx + 9}" y1="155" x2="{cx + 14}" y2="155"/>
+        <line x1="{cx + 9}" y1="165" x2="{cx + 14}" y2="165"/>
+    </g>
+    <!-- Residue inside -->
+    <rect x="{cx - 6}" y="155" width="12" height="15" rx="2" fill="#88664433" opacity="0.6"/>
+    <!-- Silver collar -->
+    <rect x="{cx - 10}" y="173" width="20" height="6" rx="2" fill="url(#sy_silver)"
+          stroke="{p['border']}" stroke-width="0.4"/>
+    <!-- Needle hub -->
+    <rect x="{cx - 4}" y="179" width="8" height="10" rx="1" fill="url(#sy_silver)"
+          stroke="{p['border']}" stroke-width="0.3"/>
+    <!-- Needle -->
+    <line x1="{cx}" y1="189" x2="{cx}" y2="215" stroke="#cccccc" stroke-width="1.5"/>
+    <line x1="{cx}" y1="215" x2="{cx}" y2="222" stroke="#cccccc" stroke-width="0.8"/>
+    <circle cx="{cx}" cy="223" r="0.8" fill="#dddddd"/>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Hypodermic Syringe</text>
+    </svg>'''
+
+
+def _inst_scalpel_set(p, w, h):
+    """Leather roll with graduated scalpels — one missing."""
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <defs>
+        <linearGradient id="sk_leather" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#5a3a1a"/><stop offset="100%" stop-color="#3a2008"/>
+        </linearGradient>
+    </defs>
+    <ellipse cx="{cx}" cy="{h - 32}" rx="55" ry="5" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Leather roll -->
+    <rect x="{cx - 60}" y="50" width="120" height="140" rx="3"
+          fill="url(#sk_leather)" stroke="{p['border']}" stroke-width="0.8"/>
+    <!-- Stitching -->
+    <rect x="{cx - 57}" y="53" width="114" height="134" rx="2" fill="none"
+          stroke="#8a6a4a" stroke-width="0.4" stroke-dasharray="3,3" opacity="0.5"/>
+    <!-- Slot dividers -->
+    <g stroke="#2a1508" stroke-width="0.5" opacity="0.4">
+        <line x1="{cx - 45}" y1="65" x2="{cx - 45}" y2="178"/>
+        <line x1="{cx - 27}" y1="65" x2="{cx - 27}" y2="178"/>
+        <line x1="{cx - 9}" y1="65" x2="{cx - 9}" y2="178"/>
+        <line x1="{cx + 9}" y1="65" x2="{cx + 9}" y2="178"/>
+        <line x1="{cx + 27}" y1="65" x2="{cx + 27}" y2="178"/>
+        <line x1="{cx + 45}" y1="65" x2="{cx + 45}" y2="178"/>
+    </g>
+    <!-- Scalpels (graduated sizes, #3 EMPTY) -->
+    <!-- #1 -->
+    <rect x="{cx - 50}" y="105" width="6" height="30" rx="2" fill="#fffff0" stroke="{p['border']}" stroke-width="0.3"/>
+    <rect x="{cx - 49}" y="75" width="4" height="32" rx="0.5" fill="#bbbbbb"/>
+    <!-- #2 -->
+    <rect x="{cx - 32}" y="100" width="7" height="33" rx="2" fill="#fff8e8" stroke="{p['border']}" stroke-width="0.3"/>
+    <rect x="{cx - 31}" y="68" width="5" height="35" rx="0.5" fill="#bbbbbb"/>
+    <!-- #3 — EMPTY SLOT -->
+    <text x="{cx - 10}" y="130" font-family="Georgia,serif" font-size="6"
+          fill="#cc4422" text-anchor="middle" opacity="0.7">?</text>
+    <!-- #4 -->
+    <rect x="{cx + 2}" y="93" width="8" height="38" rx="2" fill="#f8f0e0" stroke="{p['border']}" stroke-width="0.3"/>
+    <rect x="{cx + 3}" y="58" width="6" height="38" rx="0.5" fill="#bbbbbb"/>
+    <!-- #5 -->
+    <rect x="{cx + 20}" y="90" width="8" height="40" rx="2" fill="#fffff0" stroke="{p['border']}" stroke-width="0.3"/>
+    <rect x="{cx + 21}" y="55" width="6" height="38" rx="0.5" fill="#aaaaaa"/>
+    <!-- #6 -->
+    <rect x="{cx + 36}" y="88" width="9" height="42" rx="2" fill="#f0e8d8" stroke="{p['border']}" stroke-width="0.3"/>
+    <rect x="{cx + 37}" y="52" width="7" height="39" rx="0.5" fill="#aaaaaa"/>
+    <!-- Tie strap -->
+    <rect x="{cx - 2}" y="185" width="4" height="20" rx="1" fill="#4a2a10"/>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Scalpel Set</text>
+    </svg>'''
+
+
+def _inst_cupping_set(p, w, h):
+    """Brass cupping set in velvet case."""
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <defs>
+        <linearGradient id="cu_brass" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#c9a83e"/><stop offset="100%" stop-color="#8a6508"/>
+        </linearGradient>
+        <radialGradient id="cu_cup">
+            <stop offset="0%" stop-color="#c9a83e"/><stop offset="100%" stop-color="#6a4508"/>
+        </radialGradient>
+    </defs>
+    <ellipse cx="{cx}" cy="{h - 32}" rx="55" ry="5" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Velvet-lined case -->
+    <rect x="{cx - 58}" y="45" width="116" height="150" rx="5"
+          fill="#2a0a0a" stroke="{p['border']}" stroke-width="1"/>
+    <rect x="{cx - 54}" y="49" width="108" height="142" rx="3" fill="#3a0a0a" opacity="0.6"/>
+    <!-- Three graduated brass cups -->
+    <ellipse cx="{cx - 28}" cy="90" rx="20" ry="12" fill="url(#cu_cup)" stroke="{p['border']}" stroke-width="0.6"/>
+    <ellipse cx="{cx - 28}" cy="87" rx="16" ry="8" fill="#1a0808" opacity="0.4"/>
+    <ellipse cx="{cx + 28}" cy="90" rx="18" ry="11" fill="url(#cu_cup)" stroke="{p['border']}" stroke-width="0.6"/>
+    <ellipse cx="{cx + 28}" cy="87" rx="14" ry="7" fill="#1a0808" opacity="0.4"/>
+    <ellipse cx="{cx}" cy="130" rx="15" ry="9" fill="url(#cu_cup)" stroke="{p['border']}" stroke-width="0.6"/>
+    <ellipse cx="{cx}" cy="128" rx="12" ry="6" fill="#1a0808" opacity="0.4"/>
+    <!-- Spirit lamp -->
+    <rect x="{cx - 8}" y="155" width="16" height="12" rx="3" fill="url(#cu_brass)" stroke="{p['border']}" stroke-width="0.4"/>
+    <rect x="{cx - 2}" y="150" width="4" height="6" rx="1" fill="#666666"/>
+    <!-- Small blade -->
+    <rect x="{cx + 28}" y="150" width="3" height="18" rx="0.5" fill="#bbbbbb"/>
+    <rect x="{cx + 26}" y="165" width="7" height="12" rx="2" fill="#5a3a1a"/>
+    <!-- Case clasp -->
+    <rect x="{cx - 5}" y="42" width="10" height="6" rx="2" fill="url(#cu_brass)" stroke="{p['border']}" stroke-width="0.3"/>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Cupping Set</text>
+    </svg>'''
+
+
+def _inst_obstetric_forceps(p, w, h):
+    """Curved steel obstetric forceps."""
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <defs>
+        <linearGradient id="of_steel" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#bbbbbb"/><stop offset="100%" stop-color="#888888"/>
+        </linearGradient>
+    </defs>
+    <ellipse cx="{cx}" cy="{h - 32}" rx="35" ry="4" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Oilcloth wrapping -->
+    <rect x="{cx - 45}" y="140" width="90" height="50" rx="3"
+          fill="#8a8a6a" stroke="{p['border']}" stroke-width="0.6" opacity="0.5"/>
+    <path d="M{cx - 40},140 Q{cx - 30},130 {cx - 20},138" fill="#8a8a6a" stroke="{p['border']}"
+          stroke-width="0.4" opacity="0.4"/>
+    <!-- Left arm + blade -->
+    <path d="M{cx - 8},55 L{cx - 12},100 Q{cx - 25},145 {cx - 30},170 Q{cx - 28},185 {cx - 15},195"
+          fill="none" stroke="url(#of_steel)" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="{cx - 15}" cy="195" rx="14" ry="20" fill="none" stroke="url(#of_steel)" stroke-width="3"/>
+    <!-- Right arm + blade -->
+    <path d="M{cx + 8},55 L{cx + 12},100 Q{cx + 25},145 {cx + 30},170 Q{cx + 28},185 {cx + 15},195"
+          fill="none" stroke="url(#of_steel)" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="{cx + 15}" cy="195" rx="14" ry="20" fill="none" stroke="url(#of_steel)" stroke-width="3"/>
+    <!-- Ebony handles -->
+    <rect x="{cx - 12}" y="45" width="8" height="25" rx="4" fill="#1a1a1a" stroke="{p['border']}" stroke-width="0.5"/>
+    <rect x="{cx + 4}" y="45" width="8" height="25" rx="4" fill="#1a1a1a" stroke="{p['border']}" stroke-width="0.5"/>
+    <!-- Pivot screw -->
+    <circle cx="{cx}" cy="100" r="4" fill="#aaaaaa" stroke="{p['border']}" stroke-width="0.5"/>
+    <circle cx="{cx}" cy="100" r="1.5" fill="#666666"/>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Obstetric Forceps</text>
+    </svg>'''
+
+
+def _inst_default(p, w, h):
+    """Fallback instrument."""
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <rect x="{cx - 30}" y="60" width="60" height="120" rx="6"
+          fill="{p['card_bg']}" stroke="{p['border']}" stroke-width="1"/>
+    <text x="{cx}" y="130" font-family="Georgia,serif" font-size="28"
+          fill="{p['text']}" text-anchor="middle">&#x1F52C;</text>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Instrument</text>
+    </svg>'''
+
+
+# =============================================================================
+# SPECIMEN SVG RENDERERS
+# =============================================================================
+
+def specimen_svg(specimen_id: str, mode: str = "gaslight", w: int = 160, h: int = 260) -> str:
+    """Return a base64 encoded SVG image tag for a specimen."""
+    p = get_mode_palette(mode)
+    native_w, native_h = 200, 300
+    renderers = {
+        "heart_jar": _spec_heart,
+        "brain_section": _spec_brain,
+        "eye_collection": _spec_eyes,
+        "hand_bones": _spec_hand,
+        "blood_rack": _spec_blood_rack,
+        "wax_moulage": _spec_wax,
+    }
+    renderer = renderers.get(specimen_id, _spec_default)
+    svg_str = renderer(p, native_w, native_h)
+    return _b64_wrap(svg_str, w, h)
+
+
+def _spec_heart(p, w, h):
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <defs>
+        <linearGradient id="sh_liquid" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#88bb88" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#668866" stop-opacity="0.45"/>
+        </linearGradient>
+    </defs>
+    <ellipse cx="{cx}" cy="{h - 30}" rx="35" ry="5" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Jar -->
+    <rect x="{cx - 38}" y="35" width="76" height="160" rx="6"
+          fill="#aaddaa11" stroke="{p['border']}" stroke-width="0.8"/>
+    <rect x="{cx - 35}" y="50" width="70" height="140" rx="4" fill="url(#sh_liquid)"/>
+    <!-- Heart -->
+    <path d="M{cx},{180} C{cx - 20},{155} {cx - 30},{130} {cx - 15},{118}
+             C{cx - 5},{110} {cx},{118} {cx},{125}
+             C{cx},{118} {cx + 5},{110} {cx + 15},{118}
+             C{cx + 30},{130} {cx + 20},{155} {cx},{180} Z"
+          fill="#993333" fill-opacity="0.8" stroke="#772222" stroke-width="0.8"/>
+    <!-- Aorta stub -->
+    <rect x="{cx - 5}" y="112" width="10" height="12" rx="3" fill="#884444" opacity="0.7"/>
+    <!-- Cork -->
+    <rect x="{cx - 40}" y="30" width="80" height="10" rx="4" fill="#aa9977" stroke="{p['border']}" stroke-width="0.5"/>
+    <!-- Label -->
+    <rect x="{cx - 25}" y="192" width="50" height="16" rx="2" fill="{p['label_bg']}" opacity="0.85"/>
+    <text x="{cx}" y="203" font-family="Georgia,serif" font-size="6" fill="{p['label_text']}" text-anchor="middle">Subject 23</text>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9" fill="{p['text']}" text-anchor="middle">Heart in Formaldehyde</text>
+    </svg>'''
+
+
+def _spec_brain(p, w, h):
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <ellipse cx="{cx}" cy="{h - 30}" rx="45" ry="5" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Flat display case -->
+    <rect x="{cx - 50}" y="60" width="100" height="130" rx="4"
+          fill="#ccbbaa11" stroke="{p['border']}" stroke-width="0.8"/>
+    <rect x="{cx - 47}" y="63" width="94" height="124" rx="3" fill="#aa998822"/>
+    <!-- Brain slice -->
+    <ellipse cx="{cx}" cy="125" rx="35" ry="28" fill="#ccaa88" stroke="#aa8866" stroke-width="0.8"/>
+    <!-- Sulci -->
+    <path d="M{cx - 20},110 Q{cx - 10},118 {cx},110 Q{cx + 10},102 {cx + 20},112"
+          fill="none" stroke="#aa8866" stroke-width="0.8" opacity="0.6"/>
+    <path d="M{cx - 25},125 Q{cx - 15},132 {cx},125 Q{cx + 15},118 {cx + 25},127"
+          fill="none" stroke="#aa8866" stroke-width="0.8" opacity="0.6"/>
+    <path d="M{cx - 15},138 Q{cx},145 {cx + 15},138"
+          fill="none" stroke="#aa8866" stroke-width="0.6" opacity="0.5"/>
+    <!-- White matter -->
+    <ellipse cx="{cx}" cy="125" rx="15" ry="12" fill="#ddc8aa" opacity="0.6"/>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9" fill="{p['text']}" text-anchor="middle">Brain Cross-Section</text>
+    </svg>'''
+
+
+def _spec_blood_rack(p, w, h):
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <ellipse cx="{cx}" cy="{h - 32}" rx="55" ry="5" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Wooden rack -->
+    <rect x="{cx - 52}" y="130" width="104" height="8" rx="2" fill="#5a3a1a" stroke="{p['border']}" stroke-width="0.5"/>
+    <rect x="{cx - 52}" y="165" width="104" height="8" rx="2" fill="#5a3a1a" stroke="{p['border']}" stroke-width="0.5"/>
+    <!-- 12 vials with varying blood colors and fill levels -->
+    <g>
+        <rect x="{cx - 46}" y="55" width="8" height="85" rx="3" fill="#aa000022" stroke="{p['border']}" stroke-width="0.3"/>
+        <rect x="{cx - 45}" y="80" width="6" height="55" rx="2" fill="#cc0000" opacity="0.7"/>
+        <rect x="{cx - 38}" y="55" width="8" height="85" rx="3" fill="#aa000022" stroke="{p['border']}" stroke-width="0.3"/>
+        <rect x="{cx - 37}" y="85" width="6" height="50" rx="2" fill="#aa0000" opacity="0.65"/>
+        <rect x="{cx - 30}" y="55" width="8" height="85" rx="3" fill="#aa000022" stroke="{p['border']}" stroke-width="0.3"/>
+        <rect x="{cx - 29}" y="75" width="6" height="60" rx="2" fill="#880000" opacity="0.6"/>
+        <rect x="{cx - 22}" y="55" width="8" height="85" rx="3" fill="#aa000022" stroke="{p['border']}" stroke-width="0.3"/>
+        <rect x="{cx - 21}" y="90" width="6" height="45" rx="2" fill="#660000" opacity="0.7"/>
+        <rect x="{cx - 14}" y="55" width="8" height="85" rx="3" fill="#aa000022" stroke="{p['border']}" stroke-width="0.3"/>
+        <rect x="{cx - 13}" y="70" width="6" height="65" rx="2" fill="#bb1111" opacity="0.65"/>
+        <rect x="{cx - 6}" y="55" width="8" height="85" rx="3" fill="#aa000022" stroke="{p['border']}" stroke-width="0.3"/>
+        <rect x="{cx - 5}" y="82" width="6" height="53" rx="2" fill="#991111" opacity="0.6"/>
+        <rect x="{cx + 2}" y="55" width="8" height="85" rx="3" fill="#aa000022" stroke="{p['border']}" stroke-width="0.3"/>
+        <rect x="{cx + 3}" y="88" width="6" height="47" rx="2" fill="#770000" opacity="0.7"/>
+        <rect x="{cx + 10}" y="55" width="8" height="85" rx="3" fill="#aa000022" stroke="{p['border']}" stroke-width="0.3"/>
+        <rect x="{cx + 11}" y="78" width="6" height="57" rx="2" fill="#aa2222" opacity="0.6"/>
+        <rect x="{cx + 18}" y="55" width="8" height="85" rx="3" fill="#aa000022" stroke="{p['border']}" stroke-width="0.3"/>
+        <rect x="{cx + 19}" y="92" width="6" height="43" rx="2" fill="#550000" opacity="0.75"/>
+        <rect x="{cx + 26}" y="55" width="8" height="85" rx="3" fill="#aa000022" stroke="{p['border']}" stroke-width="0.3"/>
+        <rect x="{cx + 27}" y="72" width="6" height="63" rx="2" fill="#cc1100" opacity="0.6"/>
+        <rect x="{cx + 34}" y="55" width="8" height="85" rx="3" fill="#aa000022" stroke="{p['border']}" stroke-width="0.3"/>
+        <rect x="{cx + 35}" y="85" width="6" height="50" rx="2" fill="#881111" opacity="0.65"/>
+        <rect x="{cx + 42}" y="55" width="8" height="85" rx="3" fill="#aa000022" stroke="{p['border']}" stroke-width="0.3"/>
+        <rect x="{cx + 43}" y="95" width="6" height="40" rx="2" fill="#440000" opacity="0.8"/>
+    </g>
+    <!-- S.C. labels -->
+    <g font-family="Georgia,serif" font-size="4" fill="{p['text_dim']}" opacity="0.5">
+        <text x="{cx - 42}" y="52" text-anchor="middle">S.C.</text>
+        <text x="{cx - 26}" y="52" text-anchor="middle">S.C.</text>
+        <text x="{cx - 10}" y="52" text-anchor="middle">S.C.</text>
+        <text x="{cx + 6}" y="52" text-anchor="middle">S.C.</text>
+        <text x="{cx + 22}" y="52" text-anchor="middle">S.C.</text>
+        <text x="{cx + 38}" y="52" text-anchor="middle">S.C.</text>
+    </g>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9" fill="{p['text']}" text-anchor="middle">Blood Sample Rack</text>
+    </svg>'''
+
+
+def _spec_eyes(p, w, h):
+    return _spec_default(p, w, h, label="Eyeball Collection")
+
+def _spec_hand(p, w, h):
+    return _spec_default(p, w, h, label="Articulated Hand")
+
+def _spec_wax(p, w, h):
+    return _spec_default(p, w, h, label="Wax Moulage")
+
+
+def _spec_default(p, w, h, label="Specimen"):
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <ellipse cx="{cx}" cy="{h - 30}" rx="30" ry="4" fill="{p['shadow']}" opacity="0.3"/>
+    <rect x="{cx - 35}" y="40" width="70" height="150" rx="6"
+          fill="#aaddcc11" stroke="{p['border']}" stroke-width="0.8"/>
+    <rect x="{cx - 32}" y="55" width="64" height="130" rx="4" fill="#88aa8822"/>
+    <rect x="{cx - 37}" y="35" width="74" height="10" rx="4" fill="#aa9977" stroke="{p['border']}" stroke-width="0.5"/>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">{label}</text>
+    </svg>'''
