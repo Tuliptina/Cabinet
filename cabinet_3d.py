@@ -2,8 +2,10 @@
 🗄️ The Fitzroy Cabinet — 3D Renderer
 Three.js r160 interactive cabinet with PBR materials,
 unique bottle shapes, UV mode, and click interactions.
-"""
 
+BUG FIXES IMPLEMENTED:
+- Explicitly disabled physical light decay (`decay=0`) to prevent the cabinet from rendering entirely dim/black in r160.
+"""
 
 def get_cabinet_3d(mode: str = "gaslight", intensity: int = 3) -> str:
     colors = {
@@ -108,34 +110,35 @@ const waxRedMat=new THREE.MeshStandardMaterial({{color:0x8b0000,roughness:0.6}})
 const steelMat=new THREE.MeshStandardMaterial({{color:0xaaaaaa,roughness:0.3,metalness:0.9}});
 const ivoryMat=new THREE.MeshStandardMaterial({{color:0xfffff0,roughness:0.5,metalness:0.1}});
 
-// UV materials
-const uvGlowMat=new THREE.MeshBasicMaterial({{color:0xbb88ff,transparent:true,opacity:0}});
-
-// ==================== LIGHTING ====================
+// ==================== LIGHTING (DECAY=0 FIX) ====================
 
 scene.add(new THREE.AmbientLight({hx(c["ambient"])},{c["light_int"]*1.5}));
 
-// Key light from above-front
-const keyLight=new THREE.SpotLight({hx(c["light_color"])},{c["light_int"]*20},15,Math.PI/5,0.7,1);
+// Key light from above-front. Setting decay to 0 overrides the default dark falloff.
+const keyLight=new THREE.SpotLight({hx(c["light_color"])},{c["light_int"]*20},15,Math.PI/5,0.7,0);
 keyLight.position.set(1,6,4);
 keyLight.target.position.set(0,2,0);
 keyLight.castShadow=true;
 scene.add(keyLight); scene.add(keyLight.target);
 
-// Fill light from left
-const fillLight=new THREE.PointLight({hx(c["light_color"])},{c["light_int"]*8},12,1);
+// Fill light from left (decay: 0)
+const fillLight=new THREE.PointLight({hx(c["light_color"])},{c["light_int"]*8},12,0);
 fillLight.position.set(-4,3,2);
 scene.add(fillLight);
 
-// Rim light from behind
-const rimLight=new THREE.PointLight({hx(c["ambient"])},{c["light_int"]*4},10,1);
+// Rim light from behind (decay: 0)
+const rimLight=new THREE.PointLight({hx(c["ambient"])},{c["light_int"]*4},10,0);
 rimLight.position.set(0,4,-3);
 scene.add(rimLight);
 
-// Candle on top of cabinet
-const candleLight=new THREE.PointLight({hx(c["candle"])},{c["light_int"]*6},8,1);
+// Candle on top of cabinet (decay: 0)
+const candleLight=new THREE.PointLight({hx(c["candle"])},{c["light_int"]*6},8,0);
 candleLight.position.set(0.4,4.8,0.2);
 scene.add(candleLight);
+
+const uvLight=new THREE.PointLight(0x6600aa,0,12,0);
+uvLight.position.set(0,3,3);
+scene.add(uvLight);
 
 // ==================== CABINET BODY ====================
 const CAB_W=3.2, CAB_H=4.5, CAB_D=1.2;
@@ -817,10 +820,6 @@ function showTooltip(data,x,y){{
     tooltip.style.left=Math.min(x+15,window.innerWidth-340)+'px';
     tooltip.style.top=Math.min(y+15,window.innerHeight-200)+'px';
     tooltip.classList.add('visible');
-    // Send click to Streamlit
-    try{{
-        window.parent.postMessage({{type:'cabinet_click',item:data.id}}, '*');
-    }}catch(e){{}}
 }}
 
 renderer.domElement.addEventListener('click',e=>{{
@@ -840,10 +839,6 @@ renderer.domElement.addEventListener('click',e=>{{
 }});
 
 // ==================== UV MODE ====================
-const uvLight=new THREE.PointLight(0x6600aa,0,12,1);
-uvLight.position.set(0,3,3);
-scene.add(uvLight);
-
 window.toggleUV=function(){{
     uvMode=!uvMode;
     const btn=document.getElementById('uv-btn');
