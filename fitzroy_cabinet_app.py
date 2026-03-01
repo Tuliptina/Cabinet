@@ -421,31 +421,33 @@ def inject_css():
 
 
 # =============================================================================
-# HELPERS
+# HELPERS (BUG FIX: Strict Array Reassignment)
 # =============================================================================
 
 def record_examination(item_id: str, category: str = "item"):
-    """Track that a user examined an item."""
+    """Track that a user examined an item using safe state reassignment."""
     if category == "specimen":
         if item_id not in st.session_state.examined_specimens:
-            st.session_state.examined_specimens.append(item_id)
+            st.session_state.examined_specimens = st.session_state.examined_specimens + [item_id]
     else:
         if item_id not in st.session_state.examined_items:
-            st.session_state.examined_items.append(item_id)
+            st.session_state.examined_items = st.session_state.examined_items + [item_id]
+            
     st.session_state.total_interactions += 1
     check_secrets()
 
 
 def record_mix(recipe_id: str):
-    """Track a discovered recipe."""
+    """Track a discovered recipe using safe state reassignment."""
     if recipe_id not in st.session_state.mixed_recipes:
-        st.session_state.mixed_recipes.append(recipe_id)
+        st.session_state.mixed_recipes = st.session_state.mixed_recipes + [recipe_id]
+        
     st.session_state.total_interactions += 1
     check_secrets()
 
 
 def check_secrets():
-    """Evaluate all cabinet secrets against current state."""
+    """Evaluate all cabinet secrets against current state using safe state reassignment."""
     for secret in CABINET_SECRETS:
         if secret["id"] not in st.session_state.discovered_secrets:
             if check_cabinet_secret(
@@ -454,7 +456,7 @@ def check_secrets():
                 st.session_state.examined_specimens,
                 st.session_state.mixed_recipes,
             ):
-                st.session_state.discovered_secrets.append(secret["id"])
+                st.session_state.discovered_secrets = st.session_state.discovered_secrets + [secret["id"]]
 
 
 def render_item_card(item: dict, category: str = "item", show_full: bool = False):
