@@ -822,21 +822,15 @@ with tab_examination:
                             unsafe_allow_html=True)
             else:
                 # Placeholder for non-bottle items
-                icon_map = {
-    "leech_jar": "🫙", "scarificator": "⚙️", "trephine": "⚙️",
-    "amputation_saw": "🔪", "syringe": "💉", "scalpel_set": "🔪",
-    "cupping_set": "🏺", "obstetric_forceps": "⚙️",
-}
-default_icons = {"Instruments": "⚙️", "Specimens": "🫙", "Personal": "📜"}
-icon = icon_map.get(item["id"], default_icons.get(cat, "📦"))
-st.markdown(
+                icon = {"Instruments": "🔪", "Specimens": "🫙", "Personal": "📜"}.get(cat, "📦")
+                st.markdown(
                     f'<div style="text-align:center;padding:2rem;font-size:4rem;'
                     f'background:{t["card"]};border-radius:8px;border:1px solid {t["border"]}">'
                     f'{icon}</div>',
                     unsafe_allow_html=True,
                 )
 
-with exc2:
+        with exc2:
             st.markdown(render_item_card(item, exam_cat, show_full=True),
                         unsafe_allow_html=True)
 
