@@ -836,7 +836,7 @@ st.markdown(
                     unsafe_allow_html=True,
                 )
 
-        with exc2:
+with exc2:
             st.markdown(render_item_card(item, exam_cat, show_full=True),
                         unsafe_allow_html=True)
 
