@@ -4,8 +4,8 @@ Each bottle has a unique hand-crafted SVG design.
 Supports gaslight/gothic/clinical modes and UV overlay.
 
 BUG FIXES IMPLEMENTED:
-- Updated bottle_svg() signature to accept explicit `w`, `h`, and `uv` kwargs 
-  to prevent TypeError crashes during app tab rendering.
+- Stripped newlines from the final SVG returns to prevent Streamlit's 
+  Markdown parser from rendering indented SVG lines as raw code blocks.
 """
 
 
@@ -78,13 +78,16 @@ def bottle_svg(bottle_id: str, mode: str = "gaslight", selected: bool = False,
 
     uv_attr = 'filter="url(#uvglow)"' if uv else ""
 
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    svg_str = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
     {defs}
     <rect width="{w}" height="{h}" fill="none" stroke="{sel_stroke}" stroke-width="{sel_width}" rx="8"/>
     <g {uv_attr} filter="url(#shadow)">
     {inner_svg}
     </g>
     </svg>'''
+    
+    # Strip newlines so Streamlit Markdown doesn't parse indented tags as code blocks
+    return svg_str.replace('\n', '')
 
 
 # =============================================================================
@@ -473,7 +476,7 @@ def mixing_result_svg(recipe: dict, mode: str = "gaslight", w: int = 400, h: int
     danger_pips = "● " * recipe.get("danger", 1) + "○ " * (5 - recipe.get("danger", 1))
     rc = recipe.get("result_color", "#888888")
 
-    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    svg_str = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
     <defs>
         <radialGradient id="rxglow"><stop offset="0%" stop-color="{rc}" stop-opacity="0.4"/>
         <stop offset="100%" stop-color="{rc}" stop-opacity="0"/></radialGradient>
@@ -493,3 +496,6 @@ def mixing_result_svg(recipe: dict, mode: str = "gaslight", w: int = 400, h: int
     <text x="145" y="{h-45}" font-family="Georgia,serif" font-size="10" fill="{danger_color}">{danger_pips}</text>
     <text x="95" y="{h-20}" font-family="Georgia,serif" font-size="8" fill="{p['text_dim']}" font-style="italic">{recipe.get('lore','')[:90]}...</text>
     </svg>'''
+    
+    # Strip newlines so Streamlit Markdown doesn't parse indented tags as code blocks
+    return svg_str.replace('\n', '')
