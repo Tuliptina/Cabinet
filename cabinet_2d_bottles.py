@@ -1495,3 +1495,528 @@ def _spec_default(p, w, h, label="Specimen"):
     <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
           fill="{p['text']}" text-anchor="middle">{label}</text>
     </svg>'''
+
+
+# =============================================================================
+# PERSONAL ITEM SVG RENDERERS
+# =============================================================================
+
+def personal_svg(item_id: str, mode: str = "gaslight", w: int = 160, h: int = 260) -> str:
+    """Return a base64 encoded SVG image tag for a personal item."""
+    p = get_mode_palette(mode)
+    native_w, native_h = 200, 300
+    renderers = {
+        "notebook": _pers_notebook,
+        "locket": _pers_locket,
+        "choir_sheets": _pers_choir_sheets,
+        "red_rose_seal": _pers_red_rose_seal,
+        "romani_amulet": _pers_romani_amulet,
+        "unmarked_bottle": _pers_unmarked_bottle,
+        "sealed_letter": _pers_sealed_letter,
+    }
+    renderer = renderers.get(item_id, _pers_default)
+    svg_str = renderer(p, native_w, native_h)
+    return _b64_wrap(svg_str, w, h)
+
+
+def _pers_notebook(p, w, h):
+    """Fitzroy's leather notebook — pages rustling, ink bleeding."""
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <defs>
+        <linearGradient id="nb_leather" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#5a3a1a"/><stop offset="100%" stop-color="#2a1808"/>
+        </linearGradient>
+    </defs>
+    <ellipse cx="{cx}" cy="{h - 30}" rx="42" ry="5" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Back cover -->
+    <rect x="{cx - 40}" y="45" width="78" height="155" rx="3"
+          fill="url(#nb_leather)" stroke="{p['border']}" stroke-width="1"/>
+    <!-- Pages -->
+    <rect x="{cx - 36}" y="48" width="72" height="148" rx="2" fill="#f5f0e0"
+          stroke="#d4c8a8" stroke-width="0.5"/>
+    <rect x="{cx - 34}" y="50" width="70" height="145" rx="1" fill="#fffff0"/>
+    <!-- Page lines -->
+    <g stroke="#ccbbaa" stroke-width="0.3" opacity="0.4">
+        <line x1="{cx - 28}" y1="65" x2="{cx + 30}" y2="65"/>
+        <line x1="{cx - 28}" y1="75" x2="{cx + 30}" y2="75"/>
+        <line x1="{cx - 28}" y1="85" x2="{cx + 30}" y2="85"/>
+        <line x1="{cx - 28}" y1="95" x2="{cx + 30}" y2="95"/>
+        <line x1="{cx - 28}" y1="105" x2="{cx + 30}" y2="105"/>
+        <line x1="{cx - 28}" y1="115" x2="{cx + 30}" y2="115"/>
+        <line x1="{cx - 28}" y1="125" x2="{cx + 30}" y2="125"/>
+        <line x1="{cx - 28}" y1="135" x2="{cx + 30}" y2="135"/>
+        <line x1="{cx - 28}" y1="145" x2="{cx + 30}" y2="145"/>
+        <line x1="{cx - 28}" y1="155" x2="{cx + 30}" y2="155"/>
+        <line x1="{cx - 28}" y1="165" x2="{cx + 30}" y2="165"/>
+        <line x1="{cx - 28}" y1="175" x2="{cx + 30}" y2="175"/>
+    </g>
+    <!-- Handwritten text (scrawled) -->
+    <g font-family="'Segoe Script',cursive,Georgia" fill="#2a1a0a" opacity="0.55">
+        <text x="{cx - 24}" y="73" font-size="5" transform="rotate(-1,{cx},73)">Subject exhibits marked</text>
+        <text x="{cx - 24}" y="83" font-size="5" transform="rotate(0.5,{cx},83)">deterioration of the blood</text>
+        <text x="{cx - 24}" y="93" font-size="5" transform="rotate(-0.8,{cx},93)">sample taken 14 Nov shows</text>
+        <text x="{cx - 24}" y="103" font-size="5.5" transform="rotate(0.3,{cx},103)">anomalous coagulation</text>
+        <text x="{cx - 24}" y="123" font-size="5" transform="rotate(-0.5,{cx},123)">Must increase dosage.</text>
+        <text x="{cx - 24}" y="133" font-size="5" transform="rotate(1,{cx},133)">The boy responds well</text>
+        <text x="{cx - 24}" y="143" font-size="4.5" transform="rotate(-0.3,{cx},143)">to combination of Hg and</text>
+    </g>
+    <!-- Ink blot -->
+    <ellipse cx="{cx + 15}" cy="155" rx="8" ry="6" fill="#1a0a00" opacity="0.15"/>
+    <ellipse cx="{cx + 18}" cy="158" rx="4" ry="3" fill="#1a0a00" opacity="0.1"/>
+    <!-- Front cover -->
+    <rect x="{cx - 42}" y="42" width="78" height="155" rx="3"
+          fill="url(#nb_leather)" stroke="{p['border']}" stroke-width="1.2" opacity="0.15"/>
+    <!-- Leather strap -->
+    <rect x="{cx + 28}" y="100" width="16" height="5" rx="2" fill="#3a2008"
+          stroke="{p['border']}" stroke-width="0.4"/>
+    <circle cx="{cx + 36}" cy="102.5" r="2" fill="#b8860b" stroke="{p['border']}" stroke-width="0.3"/>
+    <!-- Spine -->
+    <rect x="{cx - 42}" y="44" width="5" height="152" rx="2" fill="#1a0a00" opacity="0.3"/>
+    <!-- ANIM: ink blot slowly bleeding/spreading -->
+    <ellipse cx="{cx + 15}" cy="155" rx="6" ry="4" fill="#1a0a00" opacity="0">
+        <animate attributeName="rx" values="6;10;8;12;6" dur="15s" repeatCount="indefinite"/>
+        <animate attributeName="ry" values="4;7;5;8;4" dur="15s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.06;0.1;0.04;0" dur="15s" repeatCount="indefinite"/>
+    </ellipse>
+    <!-- ANIM: page corner lifting as if breeze or ghost -->
+    <path d="M{cx + 34},{h - 108} Q{cx + 38},{h - 115} {cx + 30},{h - 120}"
+          fill="#f5f0e0" stroke="#d4c8a8" stroke-width="0.4" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.6;0.8;0.3;0;0;0" dur="8s" repeatCount="indefinite"/>
+    </path>
+    <!-- ANIM: a word appears and fades (ghostly) -->
+    <text x="{cx}" y="175" font-family="'Segoe Script',cursive" font-size="7"
+          fill="#880000" text-anchor="middle" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.5;0.7;0.3;0;0;0;0" dur="12s" repeatCount="indefinite"/>FORGIVE ME
+    </text>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Fitzroy's Notebook</text>
+    </svg>'''
+
+
+def _pers_locket(p, w, h):
+    """A woman's gold locket with a miniature portrait — chain swaying."""
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <defs>
+        <linearGradient id="lk_gold" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#daa520"/><stop offset="50%" stop-color="#b8860b"/><stop offset="100%" stop-color="#8a6508"/>
+        </linearGradient>
+        <radialGradient id="lk_face">
+            <stop offset="0%" stop-color="#f5deb3"/><stop offset="100%" stop-color="#d2b48c"/>
+        </radialGradient>
+    </defs>
+    <ellipse cx="{cx}" cy="{h - 30}" rx="25" ry="4" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Chain draped -->
+    <path d="M{cx - 35},45 Q{cx - 20},30 {cx},35 Q{cx + 20},30 {cx + 35},45"
+          fill="none" stroke="#b8860b" stroke-width="1.2" opacity="0.6"/>
+    <path d="M{cx - 35},45 L{cx - 20},90" fill="none" stroke="#b8860b" stroke-width="1" opacity="0.5"/>
+    <path d="M{cx + 35},45 L{cx + 20},90" fill="none" stroke="#b8860b" stroke-width="1" opacity="0.5"/>
+    <!-- Locket body (open) — back half -->
+    <circle cx="{cx + 18}" cy="130" r="32" fill="url(#lk_gold)" stroke="{p['border']}" stroke-width="1" opacity="0.6"/>
+    <circle cx="{cx + 18}" cy="130" r="28" fill="#4a3020" stroke="#8a6508" stroke-width="0.4"/>
+    <!-- Inscription inside back -->
+    <text x="{cx + 18}" y="128" font-family="'Segoe Script',cursive,Georgia" font-size="4.5"
+          fill="#b8860b" text-anchor="middle" opacity="0.5">Forever</text>
+    <text x="{cx + 18}" y="136" font-family="'Segoe Script',cursive,Georgia" font-size="4"
+          fill="#b8860b" text-anchor="middle" opacity="0.4">yours, E.</text>
+    <!-- Locket body (open) — front half with portrait -->
+    <circle cx="{cx - 12}" cy="130" r="32" fill="url(#lk_gold)" stroke="{p['border']}" stroke-width="1.2"/>
+    <circle cx="{cx - 12}" cy="130" r="27" fill="#2a1808" stroke="#8a6508" stroke-width="0.5"/>
+    <!-- Miniature portrait oval -->
+    <ellipse cx="{cx - 12}" cy="128" rx="18" ry="22" fill="#3a2a18" stroke="#8a6508" stroke-width="0.3"/>
+    <!-- Face (impressionistic) -->
+    <ellipse cx="{cx - 12}" cy="122" rx="10" ry="13" fill="url(#lk_face)" opacity="0.7"/>
+    <!-- Hair -->
+    <path d="M{cx - 24},116 Q{cx - 18},105 {cx - 12},108 Q{cx - 6},105 {cx},116"
+          fill="#4a2a10" stroke="none" opacity="0.6"/>
+    <!-- Eyes — just dark dots -->
+    <circle cx="{cx - 15}" cy="120" r="1" fill="#2a1a0a" opacity="0.5"/>
+    <circle cx="{cx - 9}" cy="120" r="1" fill="#2a1a0a" opacity="0.5"/>
+    <!-- Dress collar hint -->
+    <path d="M{cx - 22},138 Q{cx - 12},145 {cx - 2},138" fill="#4a3a5a" opacity="0.3" stroke="none"/>
+    <!-- Hinge -->
+    <circle cx="{cx + 3}" cy="100" r="2" fill="#8a6508" stroke="{p['border']}" stroke-width="0.3"/>
+    <!-- Ornate border -->
+    <circle cx="{cx - 12}" cy="130" r="30" fill="none" stroke="#daa520" stroke-width="0.5" stroke-dasharray="2,3" opacity="0.4"/>
+    <!-- ANIM: chain sways gently -->
+    <g>
+        <path d="M{cx - 35},45 Q{cx - 20},30 {cx},35 Q{cx + 20},30 {cx + 35},45"
+              fill="none" stroke="#daa520" stroke-width="0.8" opacity="0">
+            <animate attributeName="opacity" values="0;0.3;0;0.2;0" dur="6s" repeatCount="indefinite"/>
+        </path>
+        <animateTransform attributeName="transform" type="translate" values="0,0;2,1;-1,0;1,1;0,0" dur="6s" repeatCount="indefinite"/>
+    </g>
+    <!-- ANIM: portrait eyes seem to follow you (subtle glow shift) -->
+    <circle cx="{cx - 15}" cy="120" r="1.5" fill="#ffffff" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.3;0.5;0.2;0;0;0;0;0" dur="7s" repeatCount="indefinite"/>
+        <animate attributeName="cx" values="{cx - 15};{cx - 15};{cx - 14.5};{cx - 14};{cx - 14.5};{cx - 15}" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="{cx - 9}" cy="120" r="1.5" fill="#ffffff" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.3;0.5;0.2;0;0;0;0;0" dur="7s" repeatCount="indefinite"/>
+        <animate attributeName="cx" values="{cx - 9};{cx - 9};{cx - 8.5};{cx - 8};{cx - 8.5};{cx - 9}" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <!-- ANIM: gold gleam around locket edge -->
+    <circle cx="{cx - 12}" cy="130" r="31" fill="none" stroke="#ffdd44" stroke-width="1.5" opacity="0">
+        <animate attributeName="opacity" values="0;0.15;0.25;0.1;0" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">A Woman's Locket</text>
+    </svg>'''
+
+
+def _pers_choir_sheets(p, w, h):
+    """Sheet music with notes — pages fluttering, faint melody implied."""
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <ellipse cx="{cx}" cy="{h - 28}" rx="45" ry="5" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Stack of pages (slightly fanned) -->
+    <rect x="{cx - 42}" y="58" width="82" height="120" rx="1" fill="#f0ead0"
+          stroke="#c4b898" stroke-width="0.5" transform="rotate(2,{cx},118)"/>
+    <rect x="{cx - 40}" y="55" width="82" height="120" rx="1" fill="#f5f0e0"
+          stroke="#c4b898" stroke-width="0.5" transform="rotate(-1,{cx},115)"/>
+    <rect x="{cx - 38}" y="52" width="82" height="120" rx="1" fill="#fffff0"
+          stroke="#d4c8a8" stroke-width="0.6"/>
+    <!-- Staff lines -->
+    <g stroke="#8a7a5a" stroke-width="0.35" opacity="0.5">
+        <line x1="{cx - 32}" y1="72" x2="{cx + 38}" y2="72"/>
+        <line x1="{cx - 32}" y1="76" x2="{cx + 38}" y2="76"/>
+        <line x1="{cx - 32}" y1="80" x2="{cx + 38}" y2="80"/>
+        <line x1="{cx - 32}" y1="84" x2="{cx + 38}" y2="84"/>
+        <line x1="{cx - 32}" y1="88" x2="{cx + 38}" y2="88"/>
+        <line x1="{cx - 32}" y1="105" x2="{cx + 38}" y2="105"/>
+        <line x1="{cx - 32}" y1="109" x2="{cx + 38}" y2="109"/>
+        <line x1="{cx - 32}" y1="113" x2="{cx + 38}" y2="113"/>
+        <line x1="{cx - 32}" y1="117" x2="{cx + 38}" y2="117"/>
+        <line x1="{cx - 32}" y1="121" x2="{cx + 38}" y2="121"/>
+        <line x1="{cx - 32}" y1="138" x2="{cx + 38}" y2="138"/>
+        <line x1="{cx - 32}" y1="142" x2="{cx + 38}" y2="142"/>
+        <line x1="{cx - 32}" y1="146" x2="{cx + 38}" y2="146"/>
+        <line x1="{cx - 32}" y1="150" x2="{cx + 38}" y2="150"/>
+        <line x1="{cx - 32}" y1="154" x2="{cx + 38}" y2="154"/>
+    </g>
+    <!-- Musical notes (simplified) -->
+    <g fill="#2a1a0a" opacity="0.6">
+        <ellipse cx="{cx - 20}" cy="82" rx="3.5" ry="2.5" transform="rotate(-15,{cx - 20},82)"/>
+        <line x1="{cx - 17}" y1="82" x2="{cx - 17}" y2="68" stroke="#2a1a0a" stroke-width="0.7"/>
+        <ellipse cx="{cx - 8}" cy="76" rx="3.5" ry="2.5" transform="rotate(-15,{cx - 8},76)"/>
+        <line x1="{cx - 5}" y1="76" x2="{cx - 5}" y2="62" stroke="#2a1a0a" stroke-width="0.7"/>
+        <ellipse cx="{cx + 5}" cy="86" rx="3.5" ry="2.5" transform="rotate(-15,{cx + 5},86)"/>
+        <line x1="{cx + 8}" y1="86" x2="{cx + 8}" y2="72" stroke="#2a1a0a" stroke-width="0.7"/>
+        <ellipse cx="{cx + 18}" cy="80" rx="3.5" ry="2.5" transform="rotate(-15,{cx + 18},80)"/>
+        <line x1="{cx + 21}" y1="80" x2="{cx + 21}" y2="66" stroke="#2a1a0a" stroke-width="0.7"/>
+        <ellipse cx="{cx + 30}" cy="84" rx="3.5" ry="2.5" transform="rotate(-15,{cx + 30},84)"/>
+        <line x1="{cx + 33}" y1="84" x2="{cx + 33}" y2="70" stroke="#2a1a0a" stroke-width="0.7"/>
+        <!-- Second staff notes -->
+        <ellipse cx="{cx - 15}" cy="113" rx="3.5" ry="2.5" transform="rotate(-15,{cx - 15},113)"/>
+        <line x1="{cx - 12}" y1="113" x2="{cx - 12}" y2="99" stroke="#2a1a0a" stroke-width="0.7"/>
+        <ellipse cx="{cx + 2}" cy="109" rx="3.5" ry="2.5" transform="rotate(-15,{cx + 2},109)"/>
+        <line x1="{cx + 5}" y1="109" x2="{cx + 5}" y2="95" stroke="#2a1a0a" stroke-width="0.7"/>
+        <ellipse cx="{cx + 22}" cy="117" rx="3.5" ry="2.5" transform="rotate(-15,{cx + 22},117)"/>
+        <line x1="{cx + 25}" y1="117" x2="{cx + 25}" y2="103" stroke="#2a1a0a" stroke-width="0.7"/>
+    </g>
+    <!-- Title text -->
+    <text x="{cx}" y="66" font-family="'Segoe Script',cursive,Georgia" font-size="5.5"
+          fill="#2a1a0a" text-anchor="middle" font-style="italic" opacity="0.5">Abide With Me</text>
+    <!-- Pencil annotation -->
+    <text x="{cx + 25}" y="98" font-family="'Segoe Script',cursive" font-size="3.5"
+          fill="#666666" opacity="0.35" transform="rotate(5,{cx+25},98)">forte!</text>
+    <!-- ANIM: top page corner lifts and falls (breeze) -->
+    <path d="M{cx + 40},52 Q{cx + 45},45 {cx + 38},38" fill="#f5f0e0"
+          stroke="#d4c8a8" stroke-width="0.4" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.5;0.8;0.5;0;0;0" dur="7s" repeatCount="indefinite"/>
+    </path>
+    <!-- ANIM: notes glow faintly as if being played by a ghost -->
+    <ellipse cx="{cx - 20}" cy="82" rx="5" ry="4" fill="#ffdd88" opacity="0">
+        <animate attributeName="opacity" values="0;0.15;0;0;0;0;0;0" dur="4s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="{cx - 8}" cy="76" rx="5" ry="4" fill="#ffdd88" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.15;0;0;0;0;0" dur="4s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="{cx + 5}" cy="86" rx="5" ry="4" fill="#ffdd88" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.15;0;0;0;0" dur="4s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="{cx + 18}" cy="80" rx="5" ry="4" fill="#ffdd88" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0.15;0;0;0" dur="4s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="{cx + 30}" cy="84" rx="5" ry="4" fill="#ffdd88" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0.15;0;0" dur="4s" repeatCount="indefinite"/>
+    </ellipse>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Choir Sheet Music</text>
+    </svg>'''
+
+
+def _pers_red_rose_seal(p, w, h):
+    """A crimson wax seal with the Red Rose Society emblem."""
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <defs>
+        <radialGradient id="rs_wax">
+            <stop offset="0%" stop-color="#cc2200"/><stop offset="70%" stop-color="#8b0000"/>
+            <stop offset="100%" stop-color="#4a0000"/>
+        </radialGradient>
+    </defs>
+    <ellipse cx="{cx}" cy="{h - 30}" rx="30" ry="4" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Parchment scrap underneath -->
+    <rect x="{cx - 35}" y="80" width="70" height="90" rx="2" fill="#f5f0e0"
+          stroke="#c4b898" stroke-width="0.5" transform="rotate(-3,{cx},125)"/>
+    <g font-family="'Segoe Script',cursive" font-size="4" fill="#2a1a0a" opacity="0.3"
+       transform="rotate(-3,{cx},125)">
+        <text x="{cx - 25}" y="100">By the authority vested</text>
+        <text x="{cx - 25}" y="108">in the Order, this seal</text>
+        <text x="{cx - 25}" y="116">binds the bearer to</text>
+        <text x="{cx - 25}" y="124">silence and service...</text>
+    </g>
+    <!-- Wax seal — irregular circle -->
+    <circle cx="{cx}" cy="140" r="30" fill="url(#rs_wax)" stroke="#3a0000" stroke-width="1"/>
+    <!-- Wax drip edges -->
+    <ellipse cx="{cx - 20}" cy="165" rx="6" ry="8" fill="#7a0000"/>
+    <ellipse cx="{cx + 15}" cy="168" rx="5" ry="6" fill="#6a0000"/>
+    <ellipse cx="{cx + 25}" cy="145" rx="7" ry="4" fill="#8a0000"/>
+    <!-- Rose emblem stamped into wax -->
+    <!-- Outer petals -->
+    <g fill="none" stroke="#cc4444" stroke-width="0.8" opacity="0.7">
+        <path d="M{cx},{120} Q{cx - 8},{125} {cx - 6},{133} Q{cx - 2},{130} {cx},{128}"/>
+        <path d="M{cx},{120} Q{cx + 8},{125} {cx + 6},{133} Q{cx + 2},{130} {cx},{128}"/>
+        <path d="M{cx - 10},{135} Q{cx - 15},{140} {cx - 12},{148} Q{cx - 6},{144} {cx},{142}"/>
+        <path d="M{cx + 10},{135} Q{cx + 15},{140} {cx + 12},{148} Q{cx + 6},{144} {cx},{142}"/>
+        <path d="M{cx},{152} Q{cx - 5},{158} {cx},{162} Q{cx + 5},{158} {cx},{152}"/>
+    </g>
+    <!-- Center bud -->
+    <circle cx="{cx}" cy="140" r="4" fill="#cc4444" opacity="0.4"/>
+    <circle cx="{cx}" cy="140" r="2" fill="#ff6644" opacity="0.3"/>
+    <!-- Ring text around seal edge -->
+    <g font-family="Georgia,serif" font-size="3.5" fill="#cc6644" opacity="0.4">
+        <text x="{cx}" y="116" text-anchor="middle">ORDO ROSAE RUBRAE</text>
+        <text x="{cx}" y="168" text-anchor="middle">SANGUIS ET VERITAS</text>
+    </g>
+    <!-- ANIM: wax seal pulses with deep crimson — the Order watches -->
+    <circle cx="{cx}" cy="140" r="28" fill="#ff0000" opacity="0">
+        <animate attributeName="opacity" values="0;0.08;0.15;0.06;0" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <!-- ANIM: rose center blooms/throbs -->
+    <circle cx="{cx}" cy="140" r="4" fill="#ff2200" opacity="0">
+        <animate attributeName="r" values="4;7;4;6;4" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.2;0.05;0.15;0" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <!-- ANIM: ring text glows intermittently -->
+    <text x="{cx}" y="116" font-family="Georgia,serif" font-size="3.5"
+          fill="#ff4422" text-anchor="middle" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.4;0.6;0.3;0;0;0" dur="8s" repeatCount="indefinite"/>ORDO ROSAE RUBRAE
+    </text>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Red Rose Wax Seal</text>
+    </svg>'''
+
+
+def _pers_romani_amulet(p, w, h):
+    """A Romani protective amulet — bone, thread, and beads."""
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <defs>
+        <radialGradient id="ra_bone">
+            <stop offset="0%" stop-color="#f5f0e0"/><stop offset="100%" stop-color="#c4b898"/>
+        </radialGradient>
+    </defs>
+    <ellipse cx="{cx}" cy="{h - 28}" rx="30" ry="4" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Leather cord loop -->
+    <path d="M{cx - 25},45 Q{cx},30 {cx + 25},45" fill="none"
+          stroke="#4a2a10" stroke-width="2" stroke-linecap="round"/>
+    <path d="M{cx - 25},45 L{cx - 18},80" fill="none" stroke="#4a2a10" stroke-width="1.5"/>
+    <path d="M{cx + 25},45 L{cx + 18},80" fill="none" stroke="#4a2a10" stroke-width="1.5"/>
+    <!-- Thread wrapping down -->
+    <path d="M{cx - 18},80 Q{cx - 10},85 {cx},82 Q{cx + 10},85 {cx + 18},80"
+          fill="none" stroke="#4a2a10" stroke-width="1.2"/>
+    <!-- Bone pendant — carved crescent -->
+    <path d="M{cx - 20},92 Q{cx - 22},110 {cx - 15},130 Q{cx},140 {cx + 15},130 Q{cx + 22},110 {cx + 20},92"
+          fill="url(#ra_bone)" stroke="#8a7a5a" stroke-width="0.8"/>
+    <!-- Carved eye in center of bone -->
+    <ellipse cx="{cx}" cy="112" rx="10" ry="7" fill="none" stroke="#5a4a3a" stroke-width="0.8" opacity="0.6"/>
+    <circle cx="{cx}" cy="112" r="4" fill="none" stroke="#5a4a3a" stroke-width="0.6" opacity="0.5"/>
+    <circle cx="{cx}" cy="112" r="1.5" fill="#3a6a8a" opacity="0.6"/>
+    <!-- Carved runes/scratches -->
+    <line x1="{cx - 12}" y1="100" x2="{cx - 8}" y2="96" stroke="#8a7a5a" stroke-width="0.4" opacity="0.5"/>
+    <line x1="{cx + 8}" y1="100" x2="{cx + 12}" y2="96" stroke="#8a7a5a" stroke-width="0.4" opacity="0.5"/>
+    <line x1="{cx - 10}" y1="125" x2="{cx - 6}" y2="128" stroke="#8a7a5a" stroke-width="0.4" opacity="0.5"/>
+    <line x1="{cx + 10}" y1="125" x2="{cx + 6}" y2="128" stroke="#8a7a5a" stroke-width="0.4" opacity="0.5"/>
+    <!-- Beads on cord -->
+    <circle cx="{cx - 22}" cy="62" r="3.5" fill="#cc4422" stroke="#8a2200" stroke-width="0.5"/>
+    <circle cx="{cx + 22}" cy="62" r="3.5" fill="#2255aa" stroke="#0a2a6a" stroke-width="0.5"/>
+    <circle cx="{cx - 15}" cy="78" r="2.5" fill="#44aa44" stroke="#1a6a1a" stroke-width="0.4"/>
+    <circle cx="{cx + 15}" cy="78" r="2.5" fill="#ddaa00" stroke="#8a6a00" stroke-width="0.4"/>
+    <!-- Small feather dangling -->
+    <path d="M{cx - 5},132 Q{cx - 8},145 {cx - 4},160 Q{cx - 2},165 {cx - 6},170"
+          fill="none" stroke="#4a3a2a" stroke-width="0.8" opacity="0.5"/>
+    <path d="M{cx - 4},148 Q{cx - 10},152 {cx - 5},156" fill="#4a3a2a" opacity="0.2"/>
+    <path d="M{cx - 4},155 Q{cx + 2},158 {cx - 3},162" fill="#4a3a2a" opacity="0.15"/>
+    <!-- Tiny bell -->
+    <path d="M{cx + 5},132 L{cx + 5},140 Q{cx + 5},148 {cx + 12},148 Q{cx + 5},148 {cx + 5},140"
+          fill="#b8860b" opacity="0.5" stroke="#8a6508" stroke-width="0.3"/>
+    <circle cx="{cx + 8}" cy="150" r="1" fill="#b8860b" opacity="0.4"/>
+    <!-- ANIM: amulet sways gently (pendulum) -->
+    <g>
+        <animateTransform attributeName="transform" type="rotate"
+            values="0 {cx} 45;2 {cx} 45;0 {cx} 45;-2 {cx} 45;0 {cx} 45" dur="6s" repeatCount="indefinite"/>
+    </g>
+    <!-- ANIM: the carved eye pupil shifts — it watches -->
+    <circle cx="{cx}" cy="112" r="1.5" fill="#3a8acc" opacity="0.4">
+        <animate attributeName="cx" values="{cx};{cx - 1.5};{cx};{cx + 1.5};{cx}" dur="5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.4;0.6;0.4;0.7;0.4" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <!-- ANIM: beads catch light at different moments -->
+    <circle cx="{cx - 22}" cy="62" r="2" fill="white" opacity="0">
+        <animate attributeName="opacity" values="0;0.25;0;0;0;0" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="{cx + 22}" cy="62" r="2" fill="white" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.2;0;0" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <!-- ANIM: protection ward glow -->
+    <circle cx="{cx}" cy="112" r="22" fill="#44aaff" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.06;0.1;0.04;0;0" dur="8s" repeatCount="indefinite"/>
+        <animate attributeName="r" values="22;24;22;25;22" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Romani Amulet</text>
+    </svg>'''
+
+
+def _pers_unmarked_bottle(p, w, h):
+    """An unmarked dark bottle — something moves inside."""
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <defs>
+        <linearGradient id="ub_glass" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#1a1a1a" stop-opacity="0.7"/>
+            <stop offset="30%" stop-color="#2a2a2a" stop-opacity="0.5"/>
+            <stop offset="70%" stop-color="#2a2a2a" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#1a1a1a" stop-opacity="0.7"/>
+        </linearGradient>
+    </defs>
+    <ellipse cx="{cx}" cy="{h - 28}" rx="25" ry="4" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Dark bottle body -->
+    <path d="M{cx - 18},{h - 45} Q{cx - 22},{h - 50} {cx - 22},{h - 90}
+             Q{cx - 22},{h - 100} {cx - 16},{h - 108}
+             L{cx - 10},{h - 140} Q{cx},{h - 148} {cx + 10},{h - 140}
+             L{cx + 16},{h - 108} Q{cx + 22},{h - 100} {cx + 22},{h - 90}
+             Q{cx + 22},{h - 50} {cx + 18},{h - 45} Z"
+          fill="url(#ub_glass)" stroke="#333333" stroke-width="0.8"/>
+    <!-- Glass reflection -->
+    <path d="M{cx - 18},{h - 48} Q{cx - 21},{h - 55} {cx - 21},{h - 88}
+             Q{cx - 21},{h - 98} {cx - 15},{h - 105}
+             L{cx - 10},{h - 130}"
+          fill="none" stroke="white" stroke-width="0.6" opacity="0.08"/>
+    <!-- Liquid inside — very dark -->
+    <path d="M{cx - 20},{h - 48} Q{cx - 21},{h - 55} {cx - 21},{h - 85}
+             Q{cx},{h - 88} {cx + 21},{h - 85}
+             Q{cx + 21},{h - 55} {cx + 20},{h - 48} Z"
+          fill="#0a0005" opacity="0.8"/>
+    <!-- Cork — pushed in deep, sealed with wax -->
+    <rect x="{cx - 7}" y="{h - 152}" width="14" height="12" rx="2" fill="#5a4a3a"
+          stroke="#3a2a1a" stroke-width="0.5"/>
+    <rect x="{cx - 9}" y="{h - 154}" width="18" height="5" rx="2" fill="#4a0000"
+          stroke="#2a0000" stroke-width="0.4"/>
+    <!-- No label — just a scratch mark -->
+    <line x1="{cx - 8}" y1="{h - 75}" x2="{cx + 8}" y2="{h - 75}" stroke="#555" stroke-width="0.4" opacity="0.3"/>
+    <line x1="{cx}" y1="{h - 80}" x2="{cx}" y2="{h - 70}" stroke="#555" stroke-width="0.4" opacity="0.3"/>
+    <!-- ANIM: something MOVES inside the dark liquid -->
+    <ellipse cx="{cx - 5}" cy="{h - 70}" rx="6" ry="3" fill="#220011" opacity="0">
+        <animate attributeName="cx" values="{cx - 5};{cx + 8};{cx - 3};{cx + 5};{cx - 5}" dur="10s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="{h - 70};{h - 78};{h - 62};{h - 75};{h - 70}" dur="10s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.3;0.15;0.35;0" dur="10s" repeatCount="indefinite"/>
+        <animate attributeName="rx" values="6;8;5;7;6" dur="10s" repeatCount="indefinite"/>
+    </ellipse>
+    <!-- ANIM: a second shape — coiling -->
+    <ellipse cx="{cx + 4}" cy="{h - 58}" rx="4" ry="2" fill="#110008" opacity="0">
+        <animate attributeName="cx" values="{cx + 4};{cx - 6};{cx + 2};{cx - 4};{cx + 4}" dur="13s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="{h - 58};{h - 68};{h - 55};{h - 72};{h - 58}" dur="13s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.2;0.3;0.1;0" dur="13s" repeatCount="indefinite"/>
+    </ellipse>
+    <!-- ANIM: liquid surface occasionally ripples -->
+    <ellipse cx="{cx}" cy="{h - 85}" rx="18" ry="2" fill="#220022" opacity="0">
+        <animate attributeName="ry" values="2;3;1;2.5;2" dur="6s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.15;0.05;0.1;0" dur="6s" repeatCount="indefinite"/>
+    </ellipse>
+    <!-- ANIM: faint red glow from deep within -->
+    <circle cx="{cx}" cy="{h - 65}" r="10" fill="#ff0000" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.04;0.08;0.03;0;0;0;0" dur="12s" repeatCount="indefinite"/>
+    </circle>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Unmarked Bottle</text>
+    </svg>'''
+
+
+def _pers_sealed_letter(p, w, h):
+    """A sealed letter with wax — the seal cracks as you watch."""
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <ellipse cx="{cx}" cy="{h - 28}" rx="42" ry="5" fill="{p['shadow']}" opacity="0.3"/>
+    <!-- Envelope -->
+    <rect x="{cx - 45}" y="60" width="90" height="120" rx="2" fill="#f5f0e0"
+          stroke="#c4b898" stroke-width="0.8"/>
+    <!-- Flap (closed) -->
+    <path d="M{cx - 45},60 L{cx},115 L{cx + 45},60" fill="#eee8d0"
+          stroke="#c4b898" stroke-width="0.6"/>
+    <!-- Paper texture lines -->
+    <g stroke="#d4c8a8" stroke-width="0.2" opacity="0.3">
+        <line x1="{cx - 40}" y1="70" x2="{cx + 40}" y2="70"/>
+        <line x1="{cx - 40}" y1="90" x2="{cx + 40}" y2="90"/>
+        <line x1="{cx - 40}" y1="110" x2="{cx + 40}" y2="110"/>
+        <line x1="{cx - 40}" y1="130" x2="{cx + 40}" y2="130"/>
+        <line x1="{cx - 40}" y1="150" x2="{cx + 40}" y2="150"/>
+        <line x1="{cx - 40}" y1="170" x2="{cx + 40}" y2="170"/>
+    </g>
+    <!-- Address text -->
+    <g font-family="'Segoe Script',cursive,Georgia" fill="#2a1a0a" text-anchor="middle">
+        <text x="{cx}" y="140" font-size="6" opacity="0.5">Dr. A. Fitzroy</text>
+        <text x="{cx}" y="150" font-size="5" opacity="0.4">27 Harley Street</text>
+        <text x="{cx}" y="158" font-size="5" opacity="0.4">London</text>
+    </g>
+    <!-- Wax seal on flap -->
+    <circle cx="{cx}" cy="100" r="14" fill="#8b0000" stroke="#5a0000" stroke-width="0.8"/>
+    <circle cx="{cx}" cy="100" r="11" fill="none" stroke="#aa4444" stroke-width="0.3" opacity="0.5"/>
+    <!-- Seal impression (simple cross/rose) -->
+    <line x1="{cx - 5}" y1="100" x2="{cx + 5}" y2="100" stroke="#cc6644" stroke-width="0.8" opacity="0.5"/>
+    <line x1="{cx}" y1="95" x2="{cx}" y2="105" stroke="#cc6644" stroke-width="0.8" opacity="0.5"/>
+    <circle cx="{cx}" cy="100" r="3" fill="none" stroke="#cc6644" stroke-width="0.5" opacity="0.4"/>
+    <!-- Age spots -->
+    <circle cx="{cx + 30}" cy="85" r="3" fill="#c4a060" opacity="0.1"/>
+    <circle cx="{cx - 25}" cy="165" r="4" fill="#b89850" opacity="0.08"/>
+    <!-- ANIM: seal crack slowly appearing -->
+    <line x1="{cx - 8}" y1="96" x2="{cx + 10}" y2="104" stroke="#1a0000" stroke-width="0.5" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.3;0.5;0.3;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    </line>
+    <line x1="{cx - 6}" y1="103" x2="{cx + 8}" y2="97" stroke="#1a0000" stroke-width="0.4" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0.2;0.4;0.2;0;0;0" dur="10s" repeatCount="indefinite"/>
+    </line>
+    <!-- ANIM: paper edge lifting — the letter wants to be opened -->
+    <path d="M{cx - 45},60 Q{cx - 40},55 {cx - 30},58" fill="#f5f0e0"
+          stroke="#c4b898" stroke-width="0.3" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.6;0.8;0.4;0;0;0" dur="9s" repeatCount="indefinite"/>
+    </path>
+    <!-- ANIM: faint text bleeds through from inside -->
+    <g font-family="'Segoe Script',cursive" font-size="4" fill="#2a1a0a" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.08;0.12;0.06;0;0" dur="14s" repeatCount="indefinite"/>
+        <text x="{cx - 15}" y="125">...the child must not...</text>
+    </g>
+    <!-- ANIM: seal glow — the Order's mark pulses -->
+    <circle cx="{cx}" cy="100" r="16" fill="#ff0000" opacity="0">
+        <animate attributeName="opacity" values="0;0.06;0.12;0.04;0" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Sealed Letter</text>
+    </svg>'''
+
+
+def _pers_default(p, w, h):
+    """Fallback personal item."""
+    cx = w // 2
+    return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}" width="{w}" height="{h}">
+    <ellipse cx="{cx}" cy="{h - 30}" rx="30" ry="4" fill="{p['shadow']}" opacity="0.3"/>
+    <rect x="{cx - 30}" y="60" width="60" height="120" rx="6"
+          fill="{p['card_bg']}" stroke="{p['border']}" stroke-width="1"/>
+    <text x="{cx}" y="130" font-family="Georgia,serif" font-size="28"
+          fill="{p['text']}" text-anchor="middle">&#x1F4DC;</text>
+    <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
+          fill="{p['text']}" text-anchor="middle">Personal Item</text>
+    </svg>'''
