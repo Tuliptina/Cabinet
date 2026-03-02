@@ -16,7 +16,7 @@ from cabinet_content import (
     check_cabinet_secret,
 )
 from cabinet_3d import get_cabinet_3d
-from cabinet_2d_bottles import bottle_svg, mixing_result_svg, get_mode_palette, instrument_svg, specimen_svg
+from cabinet_2d_bottles import bottle_svg, mixing_result_svg, get_mode_palette, instrument_svg, specimen_svg, personal_svg
 
 # =============================================================================
 # PAGE CONFIG
@@ -830,12 +830,9 @@ with tab_examination:
                             unsafe_allow_html=True)
             else:
                 # Personal items
-                st.markdown(
-                    f'<div style="text-align:center;padding:2rem;font-size:4rem;'
-                    f'background:{t["card"]};border-radius:8px;border:1px solid {t["border"]}">'
-                    f'📜</div>',
-                    unsafe_allow_html=True,
-                )
+                svg = personal_svg(item["id"], mode=mode, w=160, h=260)
+                st.markdown(f'<div style="text-align:center;padding:1rem">{svg}</div>',
+                            unsafe_allow_html=True)
 
         with exc2:
             st.markdown(render_item_card(item, exam_cat, show_full=True),
