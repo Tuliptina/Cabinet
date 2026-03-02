@@ -145,6 +145,27 @@ def _laudanum(bid, p, w, h, uv):
     <line x1="{cx+20}" y1="{h-50}" x2="{cx+23}" y2="{h-50}" stroke="#fffff0" stroke-width="0.4" opacity="0.3"/>
     <line x1="{cx+20}" y1="{h-70}" x2="{cx+23}" y2="{h-70}" stroke="#fffff0" stroke-width="0.4" opacity="0.3"/>
     {"" if not uv else f'<text x="{cx}" y="{h-40}" text-anchor="middle" font-family="monospace" font-size="5" fill="#bb88ff" opacity="0.9">3x STANDARD</text>'}
+    <!-- ANIM: bubbles rising through opium tincture -->
+    <circle cx="{cx-5}" cy="{h-50}" r="1.2" fill="#aa7733" opacity="0">
+        <animate attributeName="cy" from="{h-50}" to="{h-115}" dur="7s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.4;0.3;0" dur="7s" repeatCount="indefinite"/>
+        <animate attributeName="r" values="1.2;1.8;0.5" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="{cx+4}" cy="{h-42}" r="0.9" fill="#aa7733" opacity="0">
+        <animate attributeName="cy" from="{h-42}" to="{h-112}" dur="9.5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.3;0.2;0" dur="9.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="{cx-8}" cy="{h-55}" r="1" fill="#aa7733" opacity="0">
+        <animate attributeName="cy" from="{h-55}" to="{h-110}" dur="12s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.25;0.15;0" dur="12s" repeatCount="indefinite"/>
+    </circle>
+    <!-- ANIM: skull eyes glow red in the dark -->
+    <circle cx="{cx-2}" cy="{h-80}" r="1.4" fill="#ff2200" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.7;0.1;0;0;0;0.5;0" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="{cx+2}" cy="{h-80}" r="1.4" fill="#ff2200" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.6;0;0;0.4;0;0" dur="5s" repeatCount="indefinite"/>
+    </circle>
     <text x="{cx}" y="{h-10}" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="{p['text']}">Laudanum</text>
     '''
 
@@ -170,6 +191,25 @@ def _chloroform(bid, p, w, h, uv):
     <path d="M{cx-5},{h-138} Q{cx-3},{h-148} {cx-6},{h-158}" fill="none" stroke="#aaddaa" stroke-width="0.4" opacity="0.3"/>
     <path d="M{cx+3},{h-140} Q{cx+5},{h-150} {cx+2},{h-160}" fill="none" stroke="#aaddaa" stroke-width="0.4" opacity="0.25"/>
     {"" if not uv else f'<text x="{cx}" y="{h-42}" text-anchor="middle" font-family="monospace" font-size="4.5" fill="#bb88ff">INCIDENT LOG — NOV 12</text>'}
+    <!-- ANIM: chloroform vapor rising from cork -->
+    <g opacity="0">
+        <path d="M{cx-3},{h-140} Q{cx-6},{h-155} {cx-2},{h-170} Q{cx+2},{h-180} {cx-4},{h-190}"
+              fill="none" stroke="#aaddaa" stroke-width="0.8"/>
+        <animate attributeName="opacity" values="0;0.35;0.2;0" dur="6s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0,0;3,-8;-2,-15" dur="6s" repeatCount="indefinite"/>
+    </g>
+    <g opacity="0">
+        <path d="M{cx+4},{h-142} Q{cx+7},{h-158} {cx+3},{h-172} Q{cx-1},{h-182} {cx+5},{h-192}"
+              fill="none" stroke="#88cc88" stroke-width="0.6"/>
+        <animate attributeName="opacity" values="0;0;0.3;0.15;0" dur="8s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0,0;-2,-6;4,-14" dur="8s" repeatCount="indefinite"/>
+    </g>
+    <g opacity="0">
+        <path d="M{cx},{h-138} Q{cx-4},{h-150} {cx+1},{h-165}"
+              fill="none" stroke="#99dd99" stroke-width="0.5"/>
+        <animate attributeName="opacity" values="0;0.25;0;0.2;0" dur="10s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0,0;2,-10;-3,-18" dur="10s" repeatCount="indefinite"/>
+    </g>
     <text x="{cx}" y="{h-10}" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="{p['text']}">Chloroform</text>
     '''
 
@@ -191,6 +231,17 @@ def _mercury(bid, p, w, h, uv):
     <text x="{cx}" y="{h-74}" text-anchor="middle" font-family="Georgia,serif" font-size="4" fill="#6a8aaa" opacity="0.8">MERCURIC CHLORIDE</text>
     <text x="{cx+28}" y="{h-50}" font-family="Georgia,serif" font-size="4" fill="#4a6a8a" opacity="0.4" transform="rotate(90,{cx+28},{h-50})">8 oz.</text>
     {"" if not uv else f'<text x="{cx}" y="{h-40}" text-anchor="middle" font-family="monospace" font-size="4.5" fill="#bb88ff">BLACKWOOD — PERSONAL</text>'}
+    <!-- ANIM: mercury blob shifting restlessly -->
+    <ellipse cx="{cx}" cy="{h-58}" rx="18" ry="5" fill="#d0d0d0" opacity="0.12">
+        <animate attributeName="rx" values="18;22;15;20;18" dur="6s" repeatCount="indefinite"/>
+        <animate attributeName="ry" values="5;3;7;4;5" dur="6s" repeatCount="indefinite"/>
+        <animate attributeName="cx" values="{cx};{cx-3};{cx+4};{cx-2};{cx}" dur="8s" repeatCount="indefinite"/>
+    </ellipse>
+    <!-- ANIM: metallic shimmer on glass -->
+    <rect x="{cx+20}" y="{h-100}" width="3" height="40" rx="1" fill="white" opacity="0">
+        <animate attributeName="opacity" values="0;0.15;0;0;0" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="x" from="{cx-28}" to="{cx+28}" dur="4s" repeatCount="indefinite"/>
+    </rect>
     <text x="{cx}" y="{h-10}" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="{p['text']}">Mercury</text>
     '''
 
@@ -214,6 +265,23 @@ def _ether(bid, p, w, h, uv):
     <polygon points="{cx-6},{h-85} {cx},{h-93} {cx+6},{h-85}" fill="none" stroke="#aa6600" stroke-width="0.5" opacity="0.5"/>
     <text x="{cx}" y="{h-86}" text-anchor="middle" font-family="sans-serif" font-size="5" fill="#aa6600" opacity="0.5">!</text>
     {"" if not uv else f'<text x="{cx}" y="{h-40}" text-anchor="middle" font-family="monospace" font-size="4.5" fill="#bb88ff">FLAMMABLE</text>'}
+    <!-- ANIM: volatile ether fumes billowing -->
+    <g opacity="0">
+        <path d="M{cx-5},{h-115} Q{cx-10},{h-135} {cx-3},{h-155} Q{cx+4},{h-170} {cx-2},{h-185}"
+              fill="none" stroke="#ddddcc" stroke-width="1" opacity="0.6"/>
+        <animate attributeName="opacity" values="0;0.35;0.15;0" dur="5s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0,0;4,-12;-2,-22" dur="5s" repeatCount="indefinite"/>
+    </g>
+    <g opacity="0">
+        <path d="M{cx+3},{h-118} Q{cx+8},{h-140} {cx+2},{h-160}"
+              fill="none" stroke="#ccccbb" stroke-width="0.7" opacity="0.5"/>
+        <animate attributeName="opacity" values="0;0;0.3;0.1;0" dur="7s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0,0;-3,-10;5,-20" dur="7s" repeatCount="indefinite"/>
+    </g>
+    <!-- ANIM: hazard symbol pulse -->
+    <polygon points="{cx-8},{h-83} {cx},{h-96} {cx+8},{h-83}" fill="#ff6600" opacity="0">
+        <animate attributeName="opacity" values="0;0.3;0;0;0;0.2;0" dur="3s" repeatCount="indefinite"/>
+    </polygon>
     <text x="{cx}" y="{h-10}" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="{p['text']}">Ether</text>
     '''
 
@@ -246,6 +314,21 @@ def _strychnine(bid, p, w, h, uv):
     <line x1="{cx+8}" y="{h-73}" x2="{cx-8}" y2="{h-68}" stroke="#ff6666" stroke-width="0.6" opacity="0.5"/>
     <text x="{cx}" y="{h-58}" text-anchor="middle" font-family="Georgia,serif" font-size="5" fill="#ff4444" letter-spacing="2" opacity="0.7">POISON</text>
     {"" if not uv else f'<text x="{cx}" y="{h-38}" text-anchor="middle" font-family="monospace" font-size="4.5" fill="#bb88ff">SCHEDULE I</text>'}
+    <!-- ANIM: POISON text flickers like failing gaslight -->
+    <text x="{cx}" y="{h-58}" text-anchor="middle" font-family="Georgia,serif" font-size="5" fill="#ff0000" letter-spacing="2" opacity="0">
+        <animate attributeName="opacity" values="0;0.8;0.2;0.9;0;0;0.7;0.1;0" dur="2.5s" repeatCount="indefinite"/>
+        POISON
+    </text>
+    <!-- ANIM: skull face pulses with malice -->
+    <circle cx="{cx}" cy="{h-82}" r="9" fill="#ff2200" opacity="0">
+        <animate attributeName="opacity" values="0;0.08;0.15;0.05;0" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="r" values="9;11;9" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <!-- ANIM: liquid seething -->
+    <circle cx="{cx-3}" cy="{h-60}" r="1" fill="#6a0000" opacity="0">
+        <animate attributeName="cy" from="{h-55}" to="{h-90}" dur="8s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.4;0.2;0" dur="8s" repeatCount="indefinite"/>
+    </circle>
     <text x="{cx}" y="{h-10}" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="{p['text']}">Strychnine</text>
     '''
 
@@ -266,6 +349,15 @@ def _arsenic_wafers(bid, p, w, h, uv):
     <path d="M{cx-15},{h-52} Q{cx},{h-55} {cx+15},{h-52}" fill="none" stroke="#c4a060" stroke-width="0.3"/>
     <ellipse cx="{cx}" cy="{h-42}" rx="32" ry="4" fill="black" fill-opacity="0.1"/>
     {"" if not uv else f'<text x="{cx}" y="{h-35}" text-anchor="middle" font-family="monospace" font-size="4.5" fill="#bb88ff">PWS CASE FILE #7</text>'}
+    <!-- ANIM: arsenic shimmer sweeping across tin -->
+    <rect x="{cx-32}" y="{h-82}" width="8" height="37" rx="2" fill="white" opacity="0">
+        <animate attributeName="x" from="{cx-35}" to="{cx+35}" dur="5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.12;0.08;0" dur="5s" repeatCount="indefinite"/>
+    </rect>
+    <!-- ANIM: faint green arsenic glow -->
+    <ellipse cx="{cx}" cy="{h-65}" rx="30" ry="18" fill="#44ff44" opacity="0">
+        <animate attributeName="opacity" values="0;0.04;0.08;0.03;0" dur="7s" repeatCount="indefinite"/>
+    </ellipse>
     <text x="{cx}" y="{h-10}" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="{p['text']}">Arsenic Wafers</text>
     '''
 
@@ -293,6 +385,20 @@ def _dovers_powder(bid, p, w, h, uv):
     <text x="{cx}" y="{h-71}" text-anchor="middle" font-family="Georgia,serif" font-size="4.5" fill="{p['label_text']}" opacity="0.5" text-decoration="line-through">Dose: 10 grains</text>
     <text x="{cx+4}" y="{h-65}" text-anchor="middle" font-family="'Segoe Script',cursive" font-size="5" fill="#8b0000">25 grains</text>
     {"" if not uv else f'<text x="{cx}" y="{h-40}" text-anchor="middle" font-family="monospace" font-size="4.5" fill="#bb88ff">DOSAGE MODIFIED</text>'}
+    <!-- ANIM: altered dosage flickers guiltily -->
+    <text x="{cx+4}" y="{h-65}" text-anchor="middle" font-family="cursive" font-size="5" fill="#cc0000" opacity="0">
+        <animate attributeName="opacity" values="0;0.8;0.3;0.9;0.5;0.8;0" dur="3.5s" repeatCount="indefinite"/>
+        25 grains
+    </text>
+    <!-- ANIM: powder particles drifting -->
+    <circle cx="{cx-6}" cy="{h-80}" r="0.6" fill="#8b7355" opacity="0">
+        <animate attributeName="cy" from="{h-95}" to="{h-45}" dur="15s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.3;0.15;0" dur="15s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="{cx+5}" cy="{h-70}" r="0.5" fill="#8b7355" opacity="0">
+        <animate attributeName="cy" from="{h-90}" to="{h-42}" dur="12s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.25;0.1;0" dur="12s" repeatCount="indefinite"/>
+    </circle>
     <text x="{cx}" y="{h-10}" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="{p['text']}">Dover's Powder</text>
     '''
 
@@ -324,6 +430,19 @@ def _paregoric(bid, p, w, h, uv):
     <text x="{cx}" y="{h-68}" text-anchor="middle" font-family="Georgia,serif" font-size="3.5" fill="{p['label_text']}" opacity="0.6">For the Quieting</text>
     <text x="{cx}" y="{h-63}" text-anchor="middle" font-family="Georgia,serif" font-size="3.5" fill="{p['label_text']}" opacity="0.6">of Infants</text>
     {"" if not uv else f'<text x="{cx}" y="{h-38}" text-anchor="middle" font-family="monospace" font-size="4" fill="#bb88ff">RED ROSE — LOT 34B</text>'}
+    <!-- ANIM: label stars twinkle ominously -->
+    <text x="{cx-10}" y="{h-90}" font-size="5" fill="#ffcc00" opacity="0">
+        <animate attributeName="opacity" values="0;0.6;0;0;0.4;0" dur="4s" repeatCount="indefinite"/>&#x2726;
+    </text>
+    <text x="{cx+8}" y="{h-92}" font-size="4" fill="#ffcc00" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.5;0;0.3;0;0" dur="5s" repeatCount="indefinite"/>&#x2726;
+    </text>
+    <!-- ANIM: liquid swirl inside bottle -->
+    <ellipse cx="{cx}" cy="{h-65}" rx="10" ry="3" fill="#a0724a" opacity="0.15">
+        <animate attributeName="rx" values="10;13;8;11;10" dur="8s" repeatCount="indefinite"/>
+        <animate attributeName="ry" values="3;2;4;2;3" dur="8s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="rotate" from="0 {cx} {h-65}" to="360 {cx} {h-65}" dur="20s" repeatCount="indefinite"/>
+    </ellipse>
     <text x="{cx}" y="{h-10}" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="{p['text']}">Paregoric</text>
     '''
 
@@ -359,6 +478,23 @@ def _fitzroy_tonic(bid, p, w, h, uv):
     <text x="{cx}" y="{h-68}" text-anchor="middle" font-family="Georgia,serif" font-size="3.5" fill="#4a6a4a">Safe for All Ages</text>
     <text x="{cx}" y="{h-58}" text-anchor="middle" font-family="monospace" font-size="3.5" fill="#6a8a6a">Batch 12-A</text>
     {"" if not uv else f'<text x="{cx}" y="{h-38}" text-anchor="middle" font-family="monospace" font-size="4.5" fill="#bb88ff">VERIFY DISTRIBUTION</text>'}
+    <!-- ANIM: sickly green glow pulsing behind bottle -->
+    <ellipse cx="{cx}" cy="{h-80}" rx="25" ry="50" fill="#44ff44" opacity="0">
+        <animate attributeName="opacity" values="0;0.05;0.1;0.03;0" dur="6s" repeatCount="indefinite"/>
+    </ellipse>
+    <!-- ANIM: tiny bubbles rising — something fermenting -->
+    <circle cx="{cx-6}" cy="{h-50}" r="0.8" fill="#5a8a5a" opacity="0">
+        <animate attributeName="cy" from="{h-45}" to="{h-100}" dur="6s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.4;0.3;0" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="{cx+3}" cy="{h-48}" r="0.6" fill="#5a8a5a" opacity="0">
+        <animate attributeName="cy" from="{h-40}" to="{h-98}" dur="8s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.35;0.2;0" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="{cx+7}" cy="{h-55}" r="0.5" fill="#5a8a5a" opacity="0">
+        <animate attributeName="cy" from="{h-50}" to="{h-102}" dur="10s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.3;0.15;0" dur="10s" repeatCount="indefinite"/>
+    </circle>
     <text x="{cx}" y="{h-10}" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="{p['text']}">Fitzroy's Tonic</text>
     '''
 
@@ -378,6 +514,21 @@ def _distilled_blood(bid, p, w, h, uv):
     <ellipse cx="{cx}" cy="{h-118}" rx="8" ry="4" fill="#8b0000" stroke="#5a0000" stroke-width="0.3"/>
     <rect x="{cx-4}" y="{h-38}" width="8" height="4" rx="1" fill="#b8860b" stroke="#8a6a0b" stroke-width="0.3"/>
     {"" if not uv else f'<text x="{cx}" y="{h-25}" text-anchor="middle" font-family="monospace" font-size="4.5" fill="#bb88ff">WARREN PROTOCOL</text>'}
+    <!-- ANIM: blood drip forming and falling from stopper -->
+    <circle cx="{cx}" cy="{h-115}" r="1.5" fill="#8b0000" opacity="0">
+        <animate attributeName="cy" values="{h-115};{h-112};{h-110};{h-90}" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="r" values="0;1;1.8;0.5" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.6;0.8;0" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <!-- ANIM: blood surface pulses like it's alive -->
+    <ellipse cx="{cx}" cy="{h-85}" rx="5" ry="1.5" fill="#aa0000" opacity="0.2">
+        <animate attributeName="rx" values="5;7;4;6;5" dur="5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.2;0.4;0.15;0.35;0.2" dur="5s" repeatCount="indefinite"/>
+    </ellipse>
+    <!-- ANIM: faint red glow from within -->
+    <rect x="{cx-7}" y="{h-100}" width="14" height="35" rx="3" fill="#ff0000" opacity="0">
+        <animate attributeName="opacity" values="0;0.06;0.12;0.04;0" dur="3s" repeatCount="indefinite"/>
+    </rect>
     <text x="{cx}" y="{h-10}" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="{p['text']}">Blood Serum</text>
     '''
 
@@ -402,6 +553,29 @@ def _smelling_salts(bid, p, w, h, uv):
     <circle cx="{cx}" cy="{h-117}" r="3" fill="none" stroke="#ddd" stroke-width="0.3"/>
     <rect x="{cx+8}" y="{h-120}" width="4" height="3" rx="1" fill="#aaa"/>
     {"" if not uv else ""}
+    <!-- ANIM: ammonia fumes rising from lid -->
+    <g opacity="0">
+        <path d="M{cx-3},{h-128} Q{cx-7},{h-145} {cx-1},{h-160} Q{cx+5},{h-175} {cx-3},{h-188}"
+              fill="none" stroke="white" stroke-width="0.7"/>
+        <animate attributeName="opacity" values="0;0.25;0.12;0" dur="5s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0,0;3,-8;-1,-16" dur="5s" repeatCount="indefinite"/>
+    </g>
+    <g opacity="0">
+        <path d="M{cx+4},{h-130} Q{cx+8},{h-148} {cx+2},{h-165}"
+              fill="none" stroke="white" stroke-width="0.5"/>
+        <animate attributeName="opacity" values="0;0;0.2;0.08;0" dur="7s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="translate" values="0,0;-2,-6;4,-14" dur="7s" repeatCount="indefinite"/>
+    </g>
+    <!-- ANIM: salt crystals twinkling -->
+    <circle cx="{cx-8}" cy="{h-85}" r="1" fill="white" opacity="0">
+        <animate attributeName="opacity" values="0;0.5;0;0;0;0.3;0" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="{cx+12}" cy="{h-65}" r="0.8" fill="white" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.4;0;0.3;0;0" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="{cx+5}" cy="{h-95}" r="0.9" fill="white" opacity="0">
+        <animate attributeName="opacity" values="0;0.3;0;0;0.5;0" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
     <text x="{cx}" y="{h-10}" text-anchor="middle" font-family="Georgia,serif" font-size="8" fill="{p['text']}">Smelling Salts</text>
     '''
 
@@ -443,6 +617,28 @@ def _belladonna(bid, p, w, h, uv):
     <text x="{cx}" y="{h-65}" text-anchor="middle" font-family="Georgia,serif" font-size="5" fill="#bb88dd" font-style="italic" opacity="0.8">Belladonna</text>
     <text x="{cx}" y="{h-58}" text-anchor="middle" font-family="Georgia,serif" font-size="3.5" fill="#9966aa" opacity="0.6">Beautiful Lady</text>
     {"" if not uv else f'<text x="{cx}" y="{h-40}" text-anchor="middle" font-family="monospace" font-size="4" fill="#bb88ff">ORDER OF THE CRIMSON VEIL</text>'}
+    <!-- ANIM: the occult eye BLINKS -->
+    <ellipse cx="{cx}" cy="{h-80}" rx="12" ry="0.5" fill="#2a0a3a" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0.9;0.9;0;0;0;0;0;0;0;0;0;0;0;0.9;0" dur="8s" repeatCount="indefinite"/>
+        <animate attributeName="ry" values="0.5;0.5;0.5;0.5;0.5;7;7;0.5;0.5;0.5;0.5;0.5;0.5;0.5;0.5;0.5;0.5;0.5;7;0.5" dur="8s" repeatCount="indefinite"/>
+    </ellipse>
+    <!-- ANIM: pupil dilates -->
+    <circle cx="{cx}" cy="{h-80}" r="1.5" fill="#9966cc" opacity="0.3">
+        <animate attributeName="r" values="1.5;1.5;1.5;3;1.5;1.5;1.5;2.5;1.5" dur="8s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.3;0.3;0.3;0.7;0.3;0.3;0.3;0.6;0.3" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <!-- ANIM: mystical purple aura around bottle -->
+    <path d="M{cx-16},{h-35} Q{cx-20},{h-45} {cx-22},{h-75}
+             Q{cx-22},{h-95} {cx-16},{h-105}
+             L{cx-12},{h-130} Q{cx-12},{h-140} {cx-8},{h-142}
+             L{cx-8},{h-155} Q{cx},{h-160} {cx+8},{h-155}
+             L{cx+8},{h-142} Q{cx+12},{h-140} {cx+12},{h-130}
+             L{cx+16},{h-105} Q{cx+22},{h-95} {cx+22},{h-75}
+             Q{cx+20},{h-45} {cx+16},{h-35} Z"
+          fill="none" stroke="#9966cc" stroke-width="2" opacity="0">
+        <animate attributeName="opacity" values="0;0.15;0.3;0.1;0" dur="6s" repeatCount="indefinite"/>
+        <animate attributeName="stroke-width" values="2;3;1;2" dur="6s" repeatCount="indefinite"/>
+    </path>
     <text x="{cx}" y="{h-10}" text-anchor="middle" font-family="Georgia,serif" font-size="9" fill="{p['text']}">Belladonna</text>
     '''
 
@@ -637,6 +833,45 @@ def _inst_leech_jar(p, w, h):
     <text x="{cx}" y="{jar_bot - 9}" font-family="Georgia,serif" font-size="5.5"
           fill="{p['label_text']}" text-anchor="middle" opacity="0.6">LIVE SPECIMENS</text>
 
+    <!-- ANIM: leech 1 undulating — body thickness pulses (breathing/feeding) -->
+    <path d="M{cx - 30},{water_top + 50} Q{cx - 38},{water_top + 60} {cx - 32},{water_top + 72}
+             Q{cx - 26},{water_top + 80} {cx - 30},{water_top + 85}"
+          fill="none" stroke="#1a1a0a" stroke-width="4.5" stroke-linecap="round" opacity="0">
+        <animate attributeName="stroke-width" values="4.5;6;4;5.5;4.5" dur="5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.3;0.5;0.2;0" dur="5s" repeatCount="indefinite"/>
+    </path>
+    <!-- ANIM: leech 1 sucker pulsing -->
+    <ellipse cx="{cx - 30}" cy="{water_top + 48}" rx="3" ry="2.5" fill="#440000" opacity="0">
+        <animate attributeName="rx" values="3;4;2.5;3.5;3" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.4;0.6;0.3;0" dur="3s" repeatCount="indefinite"/>
+    </ellipse>
+    <!-- ANIM: leech 2 writhing — path overlay shifts -->
+    <path d="M{cx - 8},{water_top + 35} Q{cx + 12},{water_top + 48} {cx + 2},{water_top + 62}
+             Q{cx - 15},{water_top + 72} {cx - 5},{water_top + 80}"
+          fill="none" stroke="#222210" stroke-width="3.5" stroke-linecap="round" opacity="0">
+        <animate attributeName="opacity" values="0;0.3;0.5;0.3;0" dur="7s" repeatCount="indefinite"/>
+    </path>
+    <!-- ANIM: leech 3 coil tightening -->
+    <path d="M{cx + 18},{water_top + 95} Q{cx + 30},{water_top + 86} {cx + 20},{water_top + 76}"
+          fill="none" stroke="#1f1f0a" stroke-width="3.8" stroke-linecap="round" opacity="0">
+        <animate attributeName="stroke-width" values="3.8;5;3.5;4.5;3.8" dur="6s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.25;0.4;0.2;0" dur="6s" repeatCount="indefinite"/>
+    </path>
+    <!-- ANIM: murky particles drifting upward -->
+    <circle cx="{cx - 12}" cy="{water_top + 85}" r="3" fill="#445533" opacity="0.15">
+        <animate attributeName="cy" from="{water_top + 90}" to="{water_top + 30}" dur="20s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.15;0.25;0.1;0.2;0.05" dur="20s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="{cx + 15}" cy="{water_top + 70}" r="4" fill="#3a4a2a" opacity="0.1">
+        <animate attributeName="cy" from="{water_top + 80}" to="{water_top + 25}" dur="25s" repeatCount="indefinite"/>
+        <animate attributeName="cx" values="{cx + 15};{cx + 10};{cx + 18};{cx + 12};{cx + 15}" dur="25s" repeatCount="indefinite"/>
+    </circle>
+    <!-- ANIM: water surface meniscus rippling -->
+    <path d="M{cx - jar_w + 8},{water_top} Q{cx},{water_top - 3} {cx + jar_w - 8},{water_top}"
+          fill="none" stroke="#aaccaa" stroke-width="0.6" opacity="0">
+        <animate attributeName="opacity" values="0;0.4;0.2;0.5;0" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="stroke-width" values="0.6;1;0.4;0.8;0.6" dur="4s" repeatCount="indefinite"/>
+    </path>
     <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
           fill="{p['text']}" text-anchor="middle">Leech Jar</text>
     </svg>'''
@@ -686,6 +921,15 @@ def _inst_scarificator(p, w, h):
     <!-- Engraving -->
     <text x="{cx}" y="{by + bh + 18}" font-family="Georgia,serif" font-size="8"
           fill="{p['text_dim']}" text-anchor="middle" font-style="italic" opacity="0.7">E.F.</text>
+    <!-- ANIM: steel glint sweeping across blades -->
+    <rect x="{cx - 22}" y="{by + 12}" width="4" height="24" rx="1" fill="white" opacity="0">
+        <animate attributeName="x" from="{cx - 25}" to="{cx + 22}" dur="3.5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.2;0.1;0" dur="3.5s" repeatCount="indefinite"/>
+    </rect>
+    <!-- ANIM: release knob glints -->
+    <circle cx="{cx}" cy="{by - 12}" r="4" fill="white" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.15;0;0;0" dur="5s" repeatCount="indefinite"/>
+    </circle>
     <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
           fill="{p['text']}" text-anchor="middle">Scarificator</text>
     </svg>'''
@@ -724,6 +968,14 @@ def _inst_trephine(p, w, h):
     <!-- Crank handle -->
     <line x1="{cx + 10}" y1="55" x2="{cx + 38}" y2="55" stroke="url(#tr_steel)" stroke-width="3" stroke-linecap="round"/>
     <circle cx="{cx + 38}" cy="55" r="5" fill="url(#tr_brass)" stroke="{p['border']}" stroke-width="0.5"/>
+    <!-- ANIM: cutting blade slowly rotating -->
+    <circle cx="{cx}" cy="185" r="15" fill="none" stroke="white" stroke-width="1.5" stroke-dasharray="4,20" opacity="0.2">
+        <animateTransform attributeName="transform" type="rotate" from="0 {cx} 185" to="360 {cx} 185" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <!-- ANIM: crank handle oscillating -->
+    <circle cx="{cx + 38}" cy="55" r="3" fill="#ffdd88" opacity="0">
+        <animate attributeName="opacity" values="0;0.3;0;0.2;0" dur="4s" repeatCount="indefinite"/>
+    </circle>
     <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
           fill="{p['text']}" text-anchor="middle">Trephination Drill</text>
     </svg>'''
@@ -762,6 +1014,15 @@ def _inst_amputation_saw(p, w, h):
           fill="none" stroke="#999999" stroke-width="0.5" opacity="0.6"/>
     <text x="{cx}" y="50" font-family="Georgia,serif" font-size="5.5"
           fill="{p['text_dim']}" text-anchor="middle" opacity="0.6">Weiss &amp; Son, London</text>
+    <!-- ANIM: steel glint travelling along blade spine -->
+    <rect x="{cx - 50}" y="123" width="6" height="10" rx="2" fill="white" opacity="0">
+        <animate attributeName="x" from="{cx - 52}" to="{cx + 52}" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.18;0.12;0" dur="4s" repeatCount="indefinite"/>
+    </rect>
+    <!-- ANIM: faint blood stain on teeth, pulsing -->
+    <path d="M{cx - 30},145 Q{cx - 20},155 {cx - 10},148" fill="#660000" opacity="0">
+        <animate attributeName="opacity" values="0;0.15;0.08;0" dur="8s" repeatCount="indefinite"/>
+    </path>
     <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
           fill="{p['text']}" text-anchor="middle">Amputation Saw</text>
     </svg>'''
@@ -818,6 +1079,31 @@ def _inst_syringe(p, w, h):
     <line x1="{cx}" y1="189" x2="{cx}" y2="215" stroke="#cccccc" stroke-width="1.5"/>
     <line x1="{cx}" y1="215" x2="{cx}" y2="222" stroke="#cccccc" stroke-width="0.8"/>
     <circle cx="{cx}" cy="223" r="0.8" fill="#dddddd"/>
+    <!-- ANIM: plunger slowly depressing then resetting -->
+    <g>
+        <rect x="{cx - 9}" y="88" width="18" height="5" rx="2" fill="#cccccc" opacity="0.4">
+            <animate attributeName="y" values="88;110;115;88" dur="8s" repeatCount="indefinite"/>
+        </rect>
+        <rect x="{cx - 2}" y="60" width="4" height="30" fill="#cccccc" opacity="0.3">
+            <animate attributeName="y" values="60;82;87;60" dur="8s" repeatCount="indefinite"/>
+        </rect>
+    </g>
+    <!-- ANIM: tiny bubble rising in barrel -->
+    <circle cx="{cx + 3}" cy="150" r="1" fill="white" opacity="0">
+        <animate attributeName="cy" values="160;140;120;100" dur="6s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.25;0.15;0" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <!-- ANIM: residue shifting -->
+    <rect x="{cx - 5}" y="155" width="10" height="15" rx="2" fill="#886644" opacity="0.1">
+        <animate attributeName="opacity" values="0.1;0.2;0.08;0.15;0.1" dur="7s" repeatCount="indefinite"/>
+        <animate attributeName="height" values="15;17;13;16;15" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <!-- ANIM: needle drip -->
+    <circle cx="{cx}" cy="224" r="0.8" fill="#886644" opacity="0">
+        <animate attributeName="cy" values="224;226;230;240;224" dur="5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.4;0.6;0;0" dur="5s" repeatCount="indefinite"/>
+        <animate attributeName="r" values="0.8;1;1.2;0.3;0.8" dur="5s" repeatCount="indefinite"/>
+    </circle>
     <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
           fill="{p['text']}" text-anchor="middle">Hypodermic Syringe</text>
     </svg>'''
@@ -869,6 +1155,17 @@ def _inst_scalpel_set(p, w, h):
     <rect x="{cx + 37}" y="52" width="7" height="39" rx="0.5" fill="#aaaaaa"/>
     <!-- Tie strap -->
     <rect x="{cx - 2}" y="185" width="4" height="20" rx="1" fill="#4a2a10"/>
+    <!-- ANIM: missing scalpel "?" pulses urgently -->
+    <text x="{cx - 10}" y="132" font-family="Georgia,serif" font-size="8"
+          fill="#ff2200" text-anchor="middle" opacity="0.3">
+        <animate attributeName="opacity" values="0.3;0.9;0.2;1;0.4;0.8;0.3" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="font-size" values="8;9;7;10;8" dur="2s" repeatCount="indefinite"/>?
+    </text>
+    <!-- ANIM: gleam sweep across visible blades -->
+    <rect x="{cx - 52}" y="65" width="3" height="70" rx="1" fill="white" opacity="0">
+        <animate attributeName="x" from="{cx - 52}" to="{cx + 50}" dur="5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.1;0.08;0" dur="5s" repeatCount="indefinite"/>
+    </rect>
     <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
           fill="{p['text']}" text-anchor="middle">Scalpel Set</text>
     </svg>'''
@@ -906,6 +1203,24 @@ def _inst_cupping_set(p, w, h):
     <rect x="{cx + 26}" y="165" width="7" height="12" rx="2" fill="#5a3a1a"/>
     <!-- Case clasp -->
     <rect x="{cx - 5}" y="42" width="10" height="6" rx="2" fill="url(#cu_brass)" stroke="{p['border']}" stroke-width="0.3"/>
+    <!-- ANIM: spirit lamp flame flickering -->
+    <g>
+        <ellipse cx="{cx}" cy="147" rx="3" ry="6" fill="#ff8800" opacity="0.6">
+            <animate attributeName="ry" values="6;8;5;9;6" dur="0.8s" repeatCount="indefinite"/>
+            <animate attributeName="rx" values="3;2;3.5;2.5;3" dur="0.6s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.6;0.8;0.5;0.9;0.6" dur="0.5s" repeatCount="indefinite"/>
+        </ellipse>
+        <ellipse cx="{cx}" cy="145" rx="1.5" ry="3" fill="#ffcc00" opacity="0.5">
+            <animate attributeName="ry" values="3;4;2.5;4.5;3" dur="0.7s" repeatCount="indefinite"/>
+        </ellipse>
+    </g>
+    <!-- ANIM: firelight flicker on brass cups -->
+    <ellipse cx="{cx - 28}" cy="88" rx="18" ry="10" fill="#ffaa00" opacity="0">
+        <animate attributeName="opacity" values="0;0.06;0.1;0.04;0" dur="1.2s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="{cx + 28}" cy="88" rx="16" ry="9" fill="#ffaa00" opacity="0">
+        <animate attributeName="opacity" values="0;0.04;0.08;0.06;0" dur="1.5s" repeatCount="indefinite"/>
+    </ellipse>
     <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
           fill="{p['text']}" text-anchor="middle">Cupping Set</text>
     </svg>'''
@@ -940,6 +1255,21 @@ def _inst_obstetric_forceps(p, w, h):
     <!-- Pivot screw -->
     <circle cx="{cx}" cy="100" r="4" fill="#aaaaaa" stroke="{p['border']}" stroke-width="0.5"/>
     <circle cx="{cx}" cy="100" r="1.5" fill="#666666"/>
+    <!-- ANIM: forceps arms seem to breathe — opening and closing -->
+    <g opacity="0.3">
+        <path d="M{cx - 8},55 L{cx - 12},100 Q{cx - 25},145 {cx - 30},170 Q{cx - 28},185 {cx - 15},195"
+              fill="none" stroke="#dddddd" stroke-width="2" stroke-linecap="round">
+            <animateTransform attributeName="transform" type="translate" values="0,0;-2,0;0,0;-1,0;0,0" dur="6s" repeatCount="indefinite"/>
+        </path>
+        <path d="M{cx + 8},55 L{cx + 12},100 Q{cx + 25},145 {cx + 30},170 Q{cx + 28},185 {cx + 15},195"
+              fill="none" stroke="#dddddd" stroke-width="2" stroke-linecap="round">
+            <animateTransform attributeName="transform" type="translate" values="0,0;2,0;0,0;1,0;0,0" dur="6s" repeatCount="indefinite"/>
+        </path>
+    </g>
+    <!-- ANIM: steel gleam on pivot -->
+    <circle cx="{cx}" cy="100" r="5" fill="white" opacity="0">
+        <animate attributeName="opacity" values="0;0.1;0;0;0" dur="7s" repeatCount="indefinite"/>
+    </circle>
     <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9"
           fill="{p['text']}" text-anchor="middle">Obstetric Forceps</text>
     </svg>'''
@@ -1006,6 +1336,32 @@ def _spec_heart(p, w, h):
     <!-- Label -->
     <rect x="{cx - 25}" y="192" width="50" height="16" rx="2" fill="{p['label_bg']}" opacity="0.85"/>
     <text x="{cx}" y="203" font-family="Georgia,serif" font-size="6" fill="{p['label_text']}" text-anchor="middle">Subject 23</text>
+    <!-- ANIM: the heart BEATS — double throb like a real heartbeat -->
+    <g>
+        <path d="M{cx},{180} C{cx - 20},{155} {cx - 30},{130} {cx - 15},{118}
+                 C{cx - 5},{110} {cx},{118} {cx},{125}
+                 C{cx},{118} {cx + 5},{110} {cx + 15},{118}
+                 C{cx + 30},{130} {cx + 20},{155} {cx},{180} Z"
+              fill="#bb3333" fill-opacity="0" stroke="#ff4444" stroke-width="1.5" opacity="0">
+            <animate attributeName="opacity" values="0;0.5;0.1;0.35;0;0;0;0;0" dur="2.5s" repeatCount="indefinite"/>
+            <animateTransform attributeName="transform" type="scale"
+                values="1 1;1.06 1.06;1 1;1.04 1.04;1 1;1 1;1 1;1 1;1 1" dur="2.5s" repeatCount="indefinite"
+                additive="sum"/>
+        </path>
+    </g>
+    <!-- ANIM: formaldehyde bubbles disturbed by heartbeat -->
+    <circle cx="{cx - 10}" cy="170" r="1" fill="#88bb88" opacity="0">
+        <animate attributeName="cy" from="175" to="55" dur="12s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.25;0.15;0" dur="12s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="{cx + 8}" cy="160" r="0.7" fill="#88bb88" opacity="0">
+        <animate attributeName="cy" from="165" to="58" dur="15s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.2;0.1;0" dur="15s" repeatCount="indefinite"/>
+    </circle>
+    <!-- ANIM: faint red glow from jar during beats -->
+    <rect x="{cx - 36}" y="50" width="72" height="140" rx="5" fill="#ff0000" opacity="0">
+        <animate attributeName="opacity" values="0;0.04;0;0.03;0;0;0;0;0" dur="2.5s" repeatCount="indefinite"/>
+    </rect>
     <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9" fill="{p['text']}" text-anchor="middle">Heart in Formaldehyde</text>
     </svg>'''
 
@@ -1029,6 +1385,23 @@ def _spec_brain(p, w, h):
           fill="none" stroke="#aa8866" stroke-width="0.6" opacity="0.5"/>
     <!-- White matter -->
     <ellipse cx="{cx}" cy="125" rx="15" ry="12" fill="#ddc8aa" opacity="0.6"/>
+    <!-- ANIM: neural activity — sulci flicker like synapses firing -->
+    <path d="M{cx - 20},110 Q{cx - 10},118 {cx},110 Q{cx + 10},102 {cx + 20},112"
+          fill="none" stroke="#ffdd88" stroke-width="1.2" opacity="0">
+        <animate attributeName="opacity" values="0;0.4;0;0;0;0.3;0;0" dur="3s" repeatCount="indefinite"/>
+    </path>
+    <path d="M{cx - 25},125 Q{cx - 15},132 {cx},125 Q{cx + 15},118 {cx + 25},127"
+          fill="none" stroke="#ffdd88" stroke-width="1" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.35;0;0.25;0;0;0" dur="4s" repeatCount="indefinite"/>
+    </path>
+    <path d="M{cx - 15},138 Q{cx},145 {cx + 15},138"
+          fill="none" stroke="#ffdd88" stroke-width="0.8" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.3;0;0;0.4;0" dur="5s" repeatCount="indefinite"/>
+    </path>
+    <!-- ANIM: white matter center pulses -->
+    <ellipse cx="{cx}" cy="125" rx="15" ry="12" fill="#ffeecc" opacity="0">
+        <animate attributeName="opacity" values="0;0.08;0.15;0.05;0" dur="6s" repeatCount="indefinite"/>
+    </ellipse>
     <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9" fill="{p['text']}" text-anchor="middle">Brain Cross-Section</text>
     </svg>'''
 
@@ -1076,6 +1449,27 @@ def _spec_blood_rack(p, w, h):
         <text x="{cx + 22}" y="52" text-anchor="middle">S.C.</text>
         <text x="{cx + 38}" y="52" text-anchor="middle">S.C.</text>
     </g>
+    <!-- ANIM: blood in vials aging — opacity shifting at different rates -->
+    <rect x="{cx - 45}" y="80" width="6" height="55" rx="2" fill="#ff0000" opacity="0">
+        <animate attributeName="opacity" values="0;0.15;0;0.1;0" dur="4s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="{cx - 21}" y="90" width="6" height="45" rx="2" fill="#880000" opacity="0">
+        <animate attributeName="opacity" values="0;0.1;0;0;0.15;0" dur="5.5s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="{cx + 3}" y="88" width="6" height="47" rx="2" fill="#990000" opacity="0">
+        <animate attributeName="opacity" values="0;0;0.12;0;0.08;0;0" dur="6.5s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="{cx + 27}" y="72" width="6" height="63" rx="2" fill="#cc1100" opacity="0">
+        <animate attributeName="opacity" values="0;0.08;0;0.12;0;0" dur="4.8s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="{cx + 43}" y="95" width="6" height="40" rx="2" fill="#440000" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0.15;0.1;0" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <!-- ANIM: one vial seems to BUBBLE — something alive in there -->
+    <circle cx="{cx - 9}" cy="120" r="0.8" fill="#ff2222" opacity="0">
+        <animate attributeName="cy" values="130;120;110;100;90;80;75" dur="10s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0.3;0.2;0.15;0.1;0.05;0" dur="10s" repeatCount="indefinite"/>
+    </circle>
     <text x="{cx}" y="{h - 10}" font-family="Georgia,serif" font-size="9" fill="{p['text']}" text-anchor="middle">Blood Sample Rack</text>
     </svg>'''
 
